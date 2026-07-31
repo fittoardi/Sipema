@@ -1,0 +1,37 @@
+<div
+    class="fixed
+    top-[-180px]
+    right-[-180px]
+    h-[420px]
+    w-[420px]
+    rounded-full
+    bg-blue-300/30
+    blur-[140px]
+    pointer-events-none">
+</div>
+
+<div
+    class="fixed
+    bottom-[-220px]
+    left-[-180px]
+    h-[460px]
+    w-[460px]
+    rounded-full
+    bg-cyan-300/30
+    blur-[160px]
+    pointer-events-none">
+</div>
+
+<div
+    class="fixed
+    top-1/2
+    left-1/2
+    -translate-x-1/2
+    -translate-y-1/2
+    h-[260px]
+    w-[260px]
+    rounded-full
+    bg-indigo-200/20
+    blur-[120px]
+    pointer-events-none">
+</div>

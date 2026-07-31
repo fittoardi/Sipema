@@ -1,0 +1,54 @@
+/* ===========================
+AUTH LAYOUT
+=========================== */
+
+.auth-card{
+    @apply bg-white/90 backdrop-blur-xl rounded-3xl border border-white/50 shadow-2xl;
+}
+
+.auth-input{
+    @apply w-full rounded-xl border border-slate-300 px-4 py-3 transition duration-300;
+}
+
+.auth-input:focus{
+    @apply border-blue-600 ring-4 ring-blue-100 outline-none;
+}
+
+.auth-button{
+    @apply w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-700 py-3 text-white font-semibold transition-all duration-300;
+}
+
+.auth-button:hover{
+    @apply shadow-xl -translate-y-1;
+}
+
+
+/* ===========================
+   Animation
+=========================== */
+
+.fade-up{
+
+    animation:fadeUp .7s ease;
+
+}
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(30px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
