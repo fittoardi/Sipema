@@ -16,7 +16,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 
 #[Fillable([
     'name',
-    'email',
+    'NIM',
     'password',
     'role',
     'is_active',
@@ -24,52 +24,39 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 
 #[Hidden([
     'password',
-    'two_factor_secret',
-    'two_factor_recovery_codes',
     'remember_token',
 ])]
 
-class User extends Authenticatable implements PasskeyUser
+class User extends Authenticatable
 {
-    use HasFactory,
-        Notifiable,
-        PasskeyAuthenticatable,
-        TwoFactorAuthenticatable;
+    use HasFactory, Notifiable;
+
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'role'
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'is_active' => 'boolean',
         ];
     }
 
-    /**
-     * Relasi ke Mahasiswa
-     */
     public function mahasiswa()
     {
         return $this->hasOne(Mahasiswa::class);
     }
 
-    /**
-     * Relasi ke Dosen
-     */
     public function dosen()
     {
         return $this->hasOne(Dosen::class);
-    }
-
-    /**
-     * Initial Avatar
-     */
-    public function initials(): string
-    {
-        $initials = Str::initials($this->name, true);
-
-        return Str::length($initials) > 1
-            ? Str::substr($initials, 0, 1) . Str::substr($initials, -1)
-            : $initials;
     }
 }

@@ -2,15 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth'])
+Route::middleware(['auth', 'role:dosen'])
     ->prefix('dosen')
-    ->name('dosen.')
+    ->as('dosen.')
     ->group(function () {
 
-        Route::get('/dashboard', function () {
-
-            return view('dashboard.dosen.index');
-
-        })->name('dashboard');
+        Route::view('/dashboard', 'dashboard.mahasiswa.index')
+            ->name('dashboard');
 
     });

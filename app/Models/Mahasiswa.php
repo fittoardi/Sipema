@@ -7,22 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 class Mahasiswa extends Model
 {
     protected $fillable = [
-
         'user_id',
         'nim',
-        'nama',
-        'jenis_kelamin',
-        'tempat_lahir',
-        'tanggal_lahir',
-        'alamat',
-        'no_hp',
-        'foto',
-        'angkatan',
-
+        'prodi_id',
+        'angkatan'
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function prodi()
+    {
+        return $this->belongsTo(Prodi::class);
     }
 }
