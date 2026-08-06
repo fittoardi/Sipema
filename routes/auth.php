@@ -1,46 +1,37 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\Auth\NewPasswordController;
-use App\Http\Controllers\Auth\PasswordResetLinkController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Authentication Routes
+| Authentication (Mahasiswa & Dosen)
 |--------------------------------------------------------------------------
-| Login Mahasiswa & Dosen
-| Admin login menggunakan Filament (/admin)
-|--------------------------------------------------------------------------
+| Admin menggunakan Filament (/admin)
 */
 
 Route::middleware('guest')->group(function () {
 
     // Login
-    Route::get('/login', [AuthenticatedSessionController::class, 'create'])
-        ->name('login');
+    Route::controller(AuthenticatedSessionController::class)->group(function () {
 
-    Route::post('/login', [AuthenticatedSessionController::class, 'store'])
-        ->name('login.store');
+        Route::get('/login', 'create')
+            ->name('login');
 
-    // Forgot Password
-    Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])
-        ->name('password.request');
+        Route::post('/login', 'store')
+            ->name('login.store');
 
-    Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
-        ->name('password.email');
+    });
 
-    // Reset Password
-    Route::get('/reset-password/{token}', [NewPasswordController::class, 'create'])
-        ->name('password.reset');
-
-    Route::post('/reset-password', [NewPasswordController::class, 'store'])
-        ->name('password.store');
 });
 
 Route::middleware('auth')->group(function () {
 
-    // Logout
-    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
-        ->name('logout');
+    Route::controller(AuthenticatedSessionController::class)->group(function () {
+
+        Route::post('/logout', 'destroy')
+            ->name('logout');
+
+    });
+
 });

@@ -7,7 +7,7 @@ Route::middleware(['auth', 'role:dosen'])
     ->as('dosen.')
     ->group(function () {
 
-        Route::view('/dashboard', 'dashboard.mahasiswa.index')
+        Route::view('/dashboard', 'dashboard.dosen.index')
             ->name('dashboard');
 
     });

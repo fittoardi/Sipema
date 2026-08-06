@@ -3,11 +3,9 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('index');
-
+    return redirect()->route('login');
 });
 
 require __DIR__.'/auth.php';
-// Route SIPEMA
 require __DIR__.'/mahasiswa.php';
 require __DIR__.'/dosen.php';
