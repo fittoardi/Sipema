@@ -1,16 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Mahasiswa\DashboardController;
 
-Route::middleware(['auth'])
+Route::middleware(['auth','role:mahasiswa'])
     ->prefix('mahasiswa')
-    ->name('mahasiswa.')
+    ->as('mahasiswa.')
     ->group(function () {
 
-        Route::get('/dashboard', function () {
-
-            return view('dashboard.mahasiswa.index');
-
-        })->name('dashboard');
+        Route::get('/dashboard', [DashboardController::class,'index'])
+            ->name('dashboard');
 
     });

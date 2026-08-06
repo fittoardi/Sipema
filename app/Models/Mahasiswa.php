@@ -12,7 +12,6 @@ class Mahasiswa extends Model
         'prodi_id',
         'angkatan'
     ];
-
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -21,5 +20,10 @@ class Mahasiswa extends Model
     public function prodi()
     {
         return $this->belongsTo(Prodi::class);
+    }
+
+    public function nilais()
+    {
+        return $this->hasMany(Nilai::class);
     }
 }
