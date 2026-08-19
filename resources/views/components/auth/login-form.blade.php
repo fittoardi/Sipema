@@ -182,10 +182,10 @@
 
         </label>
 
-        @if(Route::has('password.request'))
+        @if(Route::has('password.code.request'))
 
             <a
-                href="{{ route('password.request') }}"
+            href="{{ route('password.code.request') }}"
                 class="text-sm font-medium text-blue-600 hover:text-blue-700">
 
                 Lupa Password?
