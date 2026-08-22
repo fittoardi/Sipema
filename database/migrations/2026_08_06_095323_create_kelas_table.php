@@ -10,23 +10,31 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::create('kelas', function (Blueprint $table) {
+    {
+        Schema::create('kelas', function (Blueprint $table) {
 
-        $table->id();
+            $table->id();
 
-        $table->foreignId('prodi_id')
-            ->constrained()
-            ->cascadeOnUpdate()
-            ->restrictOnDelete();
+            $table->foreignId('mata_kuliah_id')
+                ->constrained('mata_kuliahs')
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
 
-        $table->string('nama_kelas');
+            $table->foreignId('dosen_id')
+                ->constrained('dosens')
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
 
-        $table->year('angkatan');
+            $table->string('nama');
 
-        $table->timestamps();
-    });
-}
+            $table->string('tahun_akademik');
+
+            $table->enum('semester', ['Ganjil', 'Genap']);
+
+            $table->timestamps();
+        });
+    }
+
     /**
      * Reverse the migrations.
      */

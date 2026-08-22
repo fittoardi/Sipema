@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use App\Models\Dosen;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -13,19 +13,25 @@ class DosenSeeder extends Seeder
     {
         DB::transaction(function () {
 
-            $user = User::create([
-                'name' => 'Dr. Budi Santoso',
-                'email' => 'budi@sipenma.test',
-                'password' => bcrypt('password'),
-                'role' => 'dosen',
-            ]);
+            $user = User::updateOrCreate(
+                ['email' => 'budi@sipenma.test'],
+                [
+                    'name' => 'Dr. Budi Santoso',
+                    'password' => 'password',
+                    'role' => 'dosen',
+                ],
+            );
 
-            Dosen::create([
-                'user_id' => $user->id,
-                'nidn' => '0012345678',
-                'nip' => '198501012010011001',
-                'prodi_id' => 1,
-            ]);
+            Dosen::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'nama' => 'Dr. Budi Santoso',
+                    'nidn' => '0012345678',
+                    'email' => 'budi@sipenma.test',
+                    'nip' => '198501012010011001',
+                    'prodi_id' => 1,
+                ],
+            );
 
         });
     }

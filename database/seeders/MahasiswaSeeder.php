@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use App\Models\Mahasiswa;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -13,19 +13,24 @@ class MahasiswaSeeder extends Seeder
     {
         DB::transaction(function () {
 
-            $user = User::create([
-                'name' => 'Andi Pratama',
-                'email' => 'andi@sipenma.test',
-                'password' => bcrypt('password'),
-                'role' => 'mahasiswa',
-            ]);
+            $user = User::updateOrCreate(
+                ['email' => 'andi@sipenma.test'],
+                [
+                    'name' => 'Andi Pratama',
+                    'password' => 'password',
+                    'role' => 'mahasiswa',
+                ],
+            );
 
-            Mahasiswa::create([
-                'user_id' => $user->id,
-                'nim' => '23110001',
-                'prodi_id' => 1,
-                'angkatan' => 2023,
-            ]);
+            Mahasiswa::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'nama' => 'Andi Pratama',
+                    'nim' => '23110001',
+                    'prodi_id' => 1,
+                    'angkatan' => 2023,
+                ],
+            );
 
         });
     }

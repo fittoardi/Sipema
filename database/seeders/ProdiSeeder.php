@@ -33,7 +33,10 @@ class ProdiSeeder extends Seeder
         ];
 
         foreach ($prodis as $prodi) {
-            Prodi::create($prodi);
+            Prodi::updateOrCreate(
+                ['kode_prodi' => $prodi['kode_prodi']],
+                ['nama_prodi' => $prodi['nama_prodi']],
+            );
         }
     }
 }

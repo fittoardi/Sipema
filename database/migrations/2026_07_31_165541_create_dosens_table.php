@@ -9,24 +9,24 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('dosens', function (Blueprint $table) {
-    $table->id();
+            $table->id();
 
-    $table->foreignId('user_id')
-          ->constrained()
-          ->cascadeOnDelete();
+            $table->foreignId('user_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-    $table->string('nidn')->nullable()->unique();
-    $table->string('nip')->nullable()->unique();
+            $table->string('nama');
+            $table->string('nidn')->nullable()->unique();
+            $table->string('nip')->nullable()->unique();
 
-    $table->foreignId('prodi_id')
-            ->constrained('prodis')
-            ->cascadeOnUpdate()
-            ->restrictOnDelete();
+            $table->foreignId('prodi_id')
+                ->constrained('prodis')
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
 
-        $table->timestamps();
+            $table->timestamps();
 
-
-    });
+        });
 
     }
 

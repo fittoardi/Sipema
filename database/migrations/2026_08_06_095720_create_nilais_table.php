@@ -10,34 +10,37 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::create('nilais', function (Blueprint $table) {
+    {
+        Schema::create('nilais', function (Blueprint $table) {
 
-        $table->id();
+            $table->id();
 
-        $table->foreignId('mahasiswa_id')
-            ->constrained()
-            ->cascadeOnUpdate()
-            ->cascadeOnDelete();
+            $table->foreignId('mahasiswa_id')
+                ->constrained('mahasiswas')
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
 
-        $table->foreignId('mata_kuliah_id')
-            ->constrained()
-            ->cascadeOnUpdate()
-            ->restrictOnDelete();
+            $table->foreignId('kelas_id')
+                ->constrained('kelas')
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
 
-        $table->double('tugas')->default(0);
+            $table->decimal('kuis', 5, 2)->default(0);
+            $table->double('tugas')->default(0);
+            $table->decimal('uts', 5, 2)->default(0);
+            $table->decimal('uas', 5, 2)->default(0);
 
-        $table->double('uts')->default(0);
+            $table->decimal('nilai_akhir', 5, 2)->nullable();
 
-        $table->double('uas')->default(0);
+            $table->string('grade')->nullable();
+            $table->string('status')->nullable();
 
-        $table->double('nilai_akhir')->nullable();
+            $table->unique(['kelas_id', 'mahasiswa_id']);
 
-        $table->string('grade')->nullable();
+            $table->timestamps();
+        });
+    }
 
-        $table->timestamps();
-    });
-}
     /**
      * Reverse the migrations.
      */

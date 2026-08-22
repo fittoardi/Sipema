@@ -31,6 +31,10 @@
 			</div>
 		</div>
 
+		<a href="{{ route('dosen.nilai.index') }}" class="inline-flex rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">
+			Input Nilai
+		</a>
+
 	</div>
 
 </x-layouts.dashboard>

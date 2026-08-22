@@ -10,30 +10,26 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::create('mata_kuliahs', function (Blueprint $table) {
+    {
+        Schema::create('mata_kuliahs', function (Blueprint $table) {
 
-        $table->id();
+            $table->id();
 
-        $table->foreignId('prodi_id')
-                ->constrained()
+            $table->foreignId('prodi_id')
+                ->constrained('prodis')
                 ->cascadeOnUpdate()
                 ->restrictOnDelete();
 
-        $table->foreignId('dosen_id')
-                ->constrained()
-                ->cascadeOnUpdate()
-                ->restrictOnDelete();
+            $table->string('kode')->unique();
 
-        $table->string('kode_mk')->unique();
+            $table->string('nama');
 
-        $table->string('nama_mk');
+            $table->unsignedTinyInteger('sks');
 
-        $table->unsignedTinyInteger('sks');
+            $table->timestamps();
+        });
+    }
 
-        $table->timestamps();
-    });
-}
     public function down(): void
     {
         Schema::dropIfExists('mata_kuliahs');
