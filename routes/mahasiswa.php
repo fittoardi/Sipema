@@ -11,4 +11,7 @@ Route::middleware(['auth','role:mahasiswa'])
         Route::get('/dashboard', [DashboardController::class,'index'])
             ->name('dashboard');
 
+        Route::get('/dashboard/download-nilai', [DashboardController::class, 'downloadNilai'])
+            ->name('dashboard.download-nilai');
+
     });

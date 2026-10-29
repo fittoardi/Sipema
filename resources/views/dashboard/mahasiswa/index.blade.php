@@ -90,6 +90,12 @@
 
     </div>
 
+    <div class="flex justify-end">
+        <a href="{{ route('mahasiswa.dashboard.download-nilai') }}" class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">
+            Download Nilai (CSV)
+        </a>
+    </div>
+
     <div class="rounded-xl bg-white shadow">
 
         <div class="border-b px-6 py-4">
