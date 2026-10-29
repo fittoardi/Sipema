@@ -35,6 +35,10 @@
 			Input Nilai
 		</a>
 
+		<a href="{{ route('dosen.dashboard.download-nilai') }}" class="inline-flex rounded-lg bg-green-600 px-4 py-2 font-medium text-white hover:bg-green-700">
+			Download Nilai
+		</a>
+
 	</div>
 
 </x-layouts.dashboard>
