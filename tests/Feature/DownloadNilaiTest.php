@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Dosen;
 use App\Models\Kelas;
 use App\Models\Mahasiswa;
 use App\Models\MataKuliah;
@@ -43,7 +44,7 @@ beforeEach(function () {
         'role' => 'dosen',
     ]);
 
-    $this->dosen = \App\Models\Dosen::create([
+    $this->dosen = Dosen::create([
         'user_id' => $this->dosenUser->id,
         'nidn' => '0012345678',
         'nama' => 'Test Dosen',

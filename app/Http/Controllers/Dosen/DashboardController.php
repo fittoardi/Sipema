@@ -6,10 +6,34 @@ use App\Http\Controllers\Controller;
 use App\Models\Dosen;
 use App\Models\Kelas;
 use App\Models\Nilai;
+use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DashboardController extends Controller
 {
+    public function index(): View
+    {
+        $user = auth()->user();
+        $dosen = Dosen::where('user_id', $user->id)->firstOrFail();
+
+        $kelas = $dosen->kelas()->withCount('mahasiswas')->get();
+
+        $totalMahasiswa = $kelas->sum('mahasiswas_count');
+        $totalMataKuliah = $kelas->unique('mata_kuliah_id')->count();
+        $totalJadwal = $kelas->count();
+
+        $ringkasanNilai = Nilai::whereIn('kelas_id', $dosen->kelas->pluck('id'))
+            ->avg('nilai_akhir');
+
+        return view('dashboard.dosen.index', [
+            'kelas' => $kelas,
+            'totalMahasiswa' => $totalMahasiswa,
+            'totalMataKuliah' => $totalMataKuliah,
+            'totalJadwal' => $totalJadwal,
+            'ringkasanNilai' => number_format($ringkasanNilai ?? 0, 2),
+        ]);
+    }
+
     public function downloadNilai(): StreamedResponse
     {
         $user = auth()->user();

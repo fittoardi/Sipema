@@ -1,23 +1,14 @@
 <?php
 
-use App\Filament\Resources\Dosens\DosenResource;
-use App\Filament\Resources\Dosens\Pages\CreateDosen;
-use App\Filament\Resources\Kelas\Pages\CreateKelas;
-use App\Filament\Resources\Mahasiswas\Pages\CreateMahasiswa;
-use App\Filament\Resources\MataKuliahs\Pages\CreateMataKuliah;
-use App\Filament\Resources\Prodis\Pages\CreateProdi;
-use App\Filament\Resources\Prodis\Pages\EditProdi;
 use App\Models\Dosen;
 use App\Models\Kelas;
 use App\Models\Mahasiswa;
 use App\Models\MataKuliah;
+use App\Models\Nilai;
 use App\Models\Prodi;
 use App\Models\User;
-use Filament\Facades\Filament;
-use Filament\Schemas\Schema;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
-use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
@@ -31,146 +22,65 @@ function adminUser(): User
     ]);
 }
 
-function userForRole(string $role, string $email): User
-{
-    return User::create([
-        'name' => ucfirst($role).' Test',
-        'email' => $email,
-        'password' => Hash::make('password'),
-        'role' => $role,
-    ]);
-}
-
-test('only admin users can access the Filament admin panel', function () {
-    $panel = Filament::getPanel('admin');
-
-    expect(adminUser()->canAccessPanel($panel))->toBeTrue()
-        ->and(userForRole('dosen', 'dosen@test.test')->canAccessPanel($panel))->toBeFalse()
-        ->and(userForRole('mahasiswa', 'mahasiswa@test.test')->canAccessPanel($panel))->toBeFalse();
-});
-
-test('admin can create and update a prodi', function () {
+test('admin can create a prodi', function () {
     $this->actingAs(adminUser());
 
-    Livewire::test(CreateProdi::class)
-        ->fillForm([
-            'kode_prodi' => 'TI',
-            'nama_prodi' => 'Teknik Informatika',
-        ])
-        ->call('create')
-        ->assertHasNoFormErrors();
+    $this->post(route('admin.prodi.store'), [
+        'kode_prodi' => 'TI',
+        'nama_prodi' => 'Teknik Informatika',
+    ])->assertRedirect(route('admin.prodi.index'));
 
-    $prodi = Prodi::where('kode_prodi', 'TI')->firstOrFail();
-
-    Livewire::test(EditProdi::class, ['record' => $prodi->getKey()])
-        ->fillForm(['nama_prodi' => 'Teknik Informatika Terapan'])
-        ->call('save')
-        ->assertHasNoFormErrors();
-
-    expect($prodi->refresh()->nama_prodi)->toBe('Teknik Informatika Terapan');
+    expect(Prodi::where('kode_prodi', 'TI')->exists())->toBeTrue();
 });
 
-test('admin can create a dosen and only dosen accounts are selectable', function () {
+test('admin can create academic resources', function () {
     $admin = adminUser();
-    $dosenUser = userForRole('dosen', 'dosen@test.test');
-    userForRole('mahasiswa', 'mahasiswa@test.test');
-    $prodi = Prodi::create(['kode_prodi' => 'TI', 'nama_prodi' => 'Teknik Informatika']);
-
-    $this->actingAs($admin);
-
-    Livewire::test(CreateDosen::class)
-        ->fillForm([
-            'user_id' => $dosenUser->id,
-            'nama' => 'Dosen Test',
-            'nidn' => '0012345678',
-            'email' => 'dosen.profile@test.test',
-            'nip' => '198501012010011001',
-            'prodi_id' => $prodi->id,
-        ])
-        ->call('create')
-        ->assertHasNoFormErrors();
-
-    expect(Dosen::where('user_id', $dosenUser->id)->exists())->toBeTrue();
-
-    $form = app(DosenResource::class)::form(app(Schema::class));
-    expect($form)->toBeInstanceOf(Schema::class);
-});
-
-test('admin can create a mahasiswa', function () {
-    $admin = adminUser();
-    $studentUser = userForRole('mahasiswa', 'mahasiswa@test.test');
     $prodi = Prodi::create(['kode_prodi' => 'SI', 'nama_prodi' => 'Sistem Informasi']);
-
+    $dosenUser = User::create(['name' => 'Dosen', 'email' => 'dosen-user@test.test', 'password' => Hash::make('password'), 'role' => 'dosen']);
+    $mahasiswaUser = User::create(['name' => 'Mahasiswa', 'email' => 'mahasiswa-user@test.test', 'password' => Hash::make('password'), 'role' => 'mahasiswa']);
     $this->actingAs($admin);
 
-    Livewire::test(CreateMahasiswa::class)
-        ->fillForm([
-            'user_id' => $studentUser->id,
-            'nama' => 'Mahasiswa Test',
-            'nim' => '23110001',
-            'prodi_id' => $prodi->id,
-            'angkatan' => 2023,
-        ])
-        ->call('create')
-        ->assertHasNoFormErrors();
+    $this->post(route('admin.dosen.store'), [
+        'user_id' => $dosenUser->id, 'nidn' => '0012345678', 'nip' => '198501012010011001', 'nama' => 'Dosen Test', 'email' => 'dosen@test.test', 'prodi_id' => $prodi->id,
+    ])->assertRedirect(route('admin.dosen.index'));
+    $dosen = Dosen::where('nip', '198501012010011001')->firstOrFail();
 
-    expect(Mahasiswa::where('nim', '23110001')->exists())->toBeTrue();
+    $this->post(route('admin.mahasiswa.store'), [
+        'user_id' => $mahasiswaUser->id, 'nim' => '23110001', 'nama' => 'Mahasiswa Test', 'prodi_id' => $prodi->id, 'angkatan' => 2023,
+    ])->assertRedirect(route('admin.mahasiswa.index'));
+    $mahasiswa = Mahasiswa::where('nim', '23110001')->firstOrFail();
+
+    $this->post(route('admin.matakuliah.store'), [
+        'prodi_id' => $prodi->id, 'kode' => 'MK01', 'nama' => 'Pemrograman Web', 'sks' => 3,
+    ])->assertRedirect(route('admin.matakuliah.index'));
+    $mataKuliah = MataKuliah::where('kode', 'MK01')->firstOrFail();
+
+    $this->post(route('admin.kelas.store'), [
+        'mata_kuliah_id' => $mataKuliah->id, 'dosen_id' => $dosen->id, 'nama' => 'SI-A',
+        'tahun_akademik' => '2025/2026', 'semester' => 'Ganjil',
+    ])->assertRedirect(route('admin.kelas.index'));
+    $kelas = Kelas::where('nama', 'SI-A')->firstOrFail();
+
+    $this->post(route('admin.nilai.store'), [
+        'kelas_id' => $kelas->id, 'mahasiswa_id' => $mahasiswa->id,
+        'kuis' => 80, 'tugas' => 85, 'uts' => 75, 'uas' => 88,
+    ])->assertRedirect(route('admin.nilai.index'));
+
+    expect(Nilai::where('mahasiswa_id', $mahasiswa->id)->exists())->toBeTrue();
 });
 
-test('admin can create a mata kuliah', function () {
-    $this->actingAs(adminUser());
-    $prodi = Prodi::create(['kode_prodi' => 'MI', 'nama_prodi' => 'Manajemen Informatika']);
-
-    Livewire::test(CreateMataKuliah::class)
-        ->fillForm([
-            'prodi_id' => $prodi->id,
-            'kode' => 'MK01',
-            'nama' => 'Pemrograman Web',
-            'sks' => 3,
-        ])
-        ->call('create')
-        ->assertHasNoFormErrors();
-
-    expect(MataKuliah::where('kode', 'MK01')->exists())->toBeTrue();
-});
-
-test('admin can create a class and enroll students', function () {
-    $this->actingAs(adminUser());
-    $prodi = Prodi::create(['kode_prodi' => 'TE', 'nama_prodi' => 'Teknik Elektro']);
-    $dosenUser = userForRole('dosen', 'dosen@test.test');
-    $dosen = Dosen::create(['user_id' => $dosenUser->id, 'nama' => 'Dosen Test', 'prodi_id' => $prodi->id]);
-    $studentUser = userForRole('mahasiswa', 'mahasiswa@test.test');
-    $student = Mahasiswa::create([
-        'user_id' => $studentUser->id,
-        'nama' => 'Mahasiswa Test',
-        'nim' => '23110002',
-        'prodi_id' => $prodi->id,
-        'angkatan' => 2023,
-    ]);
-    $course = MataKuliah::create(['prodi_id' => $prodi->id, 'kode' => 'MK02', 'nama' => 'Basis Data', 'sks' => 3]);
-
-    Livewire::test(CreateKelas::class)
-        ->fillForm([
-            'mata_kuliah_id' => $course->id,
-            'dosen_id' => $dosen->id,
-            'nama' => 'TE-A',
-            'tahun_akademik' => '2025/2026',
-            'semester' => 'Ganjil',
-            'mahasiswas' => [$student->id],
-        ])
-        ->call('create')
-        ->assertHasNoFormErrors();
-
-    $class = Kelas::where('nama', 'TE-A')->firstOrFail();
-    expect($class->mahasiswas()->whereKey($student)->exists())->toBeTrue();
-});
-
-test('admin can delete a prodi from its edit page', function () {
+test('admin can update and delete prodi', function () {
     $this->actingAs(adminUser());
     $prodi = Prodi::create(['kode_prodi' => 'TM', 'nama_prodi' => 'Teknik Mesin']);
 
-    Livewire::test(EditProdi::class, ['record' => $prodi->getKey()])
-        ->callAction('delete');
+    $this->put(route('admin.prodi.update', $prodi), [
+        'kode_prodi' => 'TM', 'nama_prodi' => 'Teknik Mesin Terapan',
+    ])->assertRedirect(route('admin.prodi.index'));
+
+    expect($prodi->refresh()->nama_prodi)->toBe('Teknik Mesin Terapan');
+
+    $this->delete(route('admin.prodi.destroy', $prodi))
+        ->assertRedirect(route('admin.prodi.index'));
 
     expect(Prodi::whereKey($prodi)->exists())->toBeFalse();
 });

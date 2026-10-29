@@ -170,6 +170,50 @@
 
     </div>
 
+    <div class="rounded-xl bg-white shadow overflow-hidden">
+        <div class="border-b px-6 py-4">
+            <h2 class="font-semibold text-gray-800">Daftar Nilai Akademik</h2>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-50 border-b text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        <th class="px-6 py-3">Mata Kuliah</th>
+                        <th class="px-6 py-3 text-center">Kuis</th>
+                        <th class="px-6 py-3 text-center">Tugas</th>
+                        <th class="px-6 py-3 text-center">UTS</th>
+                        <th class="px-6 py-3 text-center">UAS</th>
+                        <th class="px-6 py-3 text-center">Nilai Akhir</th>
+                        <th class="px-6 py-3 text-center">Grade</th>
+                        <th class="px-6 py-3 text-center">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    @forelse ($nilais as $n)
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ $n->kelas?->mataKuliah?->nama ?? '-' }}</td>
+                            <td class="px-6 py-4 text-sm text-center text-gray-600">{{ $n->kuis }}</td>
+                            <td class="px-6 py-4 text-sm text-center text-gray-600">{{ $n->tugas }}</td>
+                            <td class="px-6 py-4 text-sm text-center text-gray-600">{{ $n->uts }}</td>
+                            <td class="px-6 py-4 text-sm text-center text-gray-600">{{ $n->uas }}</td>
+                            <td class="px-6 py-4 text-sm text-center font-bold text-gray-900">{{ $n->nilai_akhir }}</td>
+                            <td class="px-6 py-4 text-sm text-center font-bold text-indigo-600">{{ $n->grade }}</td>
+                            <td class="px-6 py-4 text-sm text-center">
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full {{ $n->status === 'Lulus' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                    {{ $n->status }}
+                                </span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="8" class="px-6 py-6 text-center text-sm text-gray-500">Belum ada nilai yang diinputkan.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 </div>
 
 </x-layouts.dashboard>

@@ -9,8 +9,7 @@ Route::middleware(['auth', 'role:dosen'])
     ->as('dosen.')
     ->group(function () {
 
-        Route::view('/dashboard', 'dashboard.dosen.index')
-            ->name('dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         Route::get('dashboard/nilai', [NilaiController::class, 'index'])->name('nilai.index');
         Route::post('dashboard/nilai', [NilaiController::class, 'store'])->name('nilai.store');

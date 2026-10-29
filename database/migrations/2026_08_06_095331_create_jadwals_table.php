@@ -9,33 +9,34 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-  public function up(): void
-{
-    Schema::create('jadwals', function (Blueprint $table) {
+    public function up(): void
+    {
+        Schema::create('jadwals', function (Blueprint $table) {
 
-        $table->id();
+            $table->id();
 
-        $table->foreignId('mata_kuliah_id')
-            ->constrained()
-            ->cascadeOnUpdate()
-            ->restrictOnDelete();
+            $table->foreignId('mata_kuliah_id')
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
 
-        $table->foreignId('kelas_id')
-            ->constrained()
-            ->cascadeOnUpdate()
-            ->restrictOnDelete();
+            $table->foreignId('kelas_id')
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
 
-        $table->string('hari');
+            $table->string('hari');
 
-        $table->time('jam_mulai');
+            $table->time('jam_mulai');
 
-        $table->time('jam_selesai');
+            $table->time('jam_selesai');
 
-        $table->string('ruangan');
+            $table->string('ruangan');
 
-        $table->timestamps();
-    });
-}
+            $table->timestamps();
+        });
+    }
+
     /**
      * Reverse the migrations.
      */

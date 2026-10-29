@@ -40,6 +40,10 @@ class DashboardController extends Controller
                 $mahasiswa->id
             )->avg('nilai_akhir'),
 
+            'nilais' => Nilai::with('kelas.mataKuliah')
+                ->where('mahasiswa_id', $mahasiswa->id)
+                ->get(),
+
         ]);
     }
 
@@ -53,18 +57,18 @@ class DashboardController extends Controller
             ->where('mahasiswa_id', $mahasiswa->id)
             ->get();
 
-        $filename = 'nilai_' . $mahasiswa->nim . '.csv';
+        $filename = 'nilai_'.$mahasiswa->nim.'.csv';
 
         $headers = [
             'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ];
 
         $callback = function () use ($nilais) {
             $handle = fopen('php://output', 'w');
 
             // UTF-8 BOM for Excel compatibility
-            fputs($handle, "\xEF\xBB\xBF");
+            fwrite($handle, "\xEF\xBB\xBF");
 
             // Header row
             fputcsv($handle, [
