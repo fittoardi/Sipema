@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Role;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -30,7 +31,23 @@ class User extends Authenticatable
     {
         return [
             'password' => 'hashed',
+            'role' => Role::class,
         ];
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === Role::Admin || $this->role === 'admin';
+    }
+
+    public function isDosen(): bool
+    {
+        return $this->role === Role::Dosen || $this->role === 'dosen';
+    }
+
+    public function isMahasiswa(): bool
+    {
+        return $this->role === Role::Mahasiswa || $this->role === 'mahasiswa';
     }
 
     public function mahasiswa(): HasOne

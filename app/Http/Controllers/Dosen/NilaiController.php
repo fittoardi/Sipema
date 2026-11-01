@@ -49,9 +49,13 @@ class NilaiController extends Controller
 
         abort_unless($kelas->mahasiswas()->whereKey($validated['mahasiswa_id'])->exists(), 403);
 
-        $nilai = Nilai::firstOrNew([
+        $km = \App\Models\KelasMahasiswa::firstOrCreate([
             'kelas_id' => $kelas->id,
             'mahasiswa_id' => $validated['mahasiswa_id'],
+        ]);
+
+        $nilai = Nilai::firstOrNew([
+            'kelas_mahasiswa_id' => $km->id,
         ]);
         $nilai->fill($validated)->recalculate()->save();
 

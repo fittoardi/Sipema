@@ -13,12 +13,12 @@ class DatabaseSeeder extends Seeder
             SkalaGradeSeeder::class,
             TahunAkademikSeeder::class,
             ProdiSeeder::class,
+            RuanganSeeder::class,
             AdminSeeder::class,
             DosenSeeder::class,
             MahasiswaSeeder::class,
             MataKuliahSeeder::class,
             KelasSeeder::class,
-            JadwalSeeder::class,
             NilaiSeeder::class,
         ]);
     }

@@ -25,10 +25,10 @@ class ProdiRequest extends FormRequest
             'kode_prodi' => [
                 'required',
                 'string',
-                'max:10',
-                Rule::unique('prodis', 'kode_prodi')->ignore($prodiId),
+                'max:20',
+                Rule::unique('program_studi', 'kode')->ignore($prodiId),
             ],
-            'nama_prodi' => ['required', 'string', 'max:100'],
+            'nama_prodi' => ['required', 'string', 'max:255'],
         ];
     }
 }

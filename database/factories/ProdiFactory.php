@@ -18,8 +18,8 @@ class ProdiFactory extends Factory
     public function definition(): array
     {
         return [
-            'kode_prodi' => strtoupper(fake()->unique()->bothify('P##')),
-            'nama_prodi' => fake()->randomElement([
+            'kode' => strtoupper(fake()->unique()->bothify('P##')),
+            'nama' => fake()->randomElement([
                 'Teknik Informatika',
                 'Sistem Informasi',
                 'Teknik Elektro',
@@ -32,25 +32,7 @@ class ProdiFactory extends Factory
                 'Bisnis Digital',
                 'Sains Data',
                 'Kecerdasan Buatan',
-                'Desain Komunikasi Visual',
-                'Rekayasa Keselamatan Kerja',
-                'Teknik Mekatronika',
-                'Teknik Otomasi',
-                'Teknik Telekomunikasi',
-                'Teknik Komputer',
-                'Bioteknologi',
-                'Arsitektur',
-                'Teknik Kimia',
-                'Teknik Lingkungan',
-                'Teknik Pertambangan',
-                'Teknik Perminyakan',
-                'Teknik Nuklir',
-                'Fisika Terapan',
-                'Matematika Komputasi',
-                'Statistika Terapan',
-                'Sistem Cerdas',
-                'Teknik Robotika',
-            ]).' '.fake()->unique()->numberBetween(1, 999),
+            ]).' '.fake()->unique()->numberBetween(1, 99),
         ];
     }
 }

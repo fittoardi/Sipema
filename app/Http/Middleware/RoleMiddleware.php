@@ -15,7 +15,11 @@ class RoleMiddleware
             return redirect()->route('login');
         }
 
-        if (Auth::user()->role !== $role) {
+        $userRole = Auth::user()->role instanceof \App\Enums\Role
+            ? Auth::user()->role->value
+            : (string) Auth::user()->role;
+
+        if ($userRole !== $role) {
             abort(403);
         }
 

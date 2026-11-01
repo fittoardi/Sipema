@@ -24,7 +24,6 @@ class DosenFactory extends Factory
         return [
             'user_id' => User::factory()->dosen()->state(['name' => $name]),
             'nama' => $name,
-            'image' => null,
             'nidn' => fake()->unique()->numerify('00########'),
             'email' => fake()->unique()->safeEmail(),
             'nip' => fake()->unique()->numerify('198#########00#'),

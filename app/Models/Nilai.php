@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Services\NilaiCalculator;
+use App\Enums\StatusNilai;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,9 +14,10 @@ class Nilai extends Model
 {
     use HasFactory;
 
+    protected $table = 'nilai';
+
     protected $fillable = [
-        'kelas_id',
-        'mahasiswa_id',
+        'kelas_mahasiswa_id',
         'kuis',
         'tugas',
         'uts',
@@ -30,22 +31,38 @@ class Nilai extends Model
     protected function casts(): array
     {
         return [
-            'kuis' => 'decimal:2',
-            'tugas' => 'decimal:2',
-            'uts' => 'decimal:2',
-            'uas' => 'decimal:2',
-            'nilai_akhir' => 'decimal:2',
+            'kuis' => 'float',
+            'tugas' => 'float',
+            'uts' => 'float',
+            'uas' => 'float',
+            'nilai_akhir' => 'float',
+            'status' => StatusNilai::class,
         ];
     }
 
-    public function kelas(): BelongsTo
+    public function kelasMahasiswa(): BelongsTo
     {
-        return $this->belongsTo(Kelas::class);
+        return $this->belongsTo(KelasMahasiswa::class, 'kelas_mahasiswa_id');
     }
 
-    public function mahasiswa(): BelongsTo
+    public function getKelasAttribute()
     {
-        return $this->belongsTo(Mahasiswa::class);
+        return $this->kelasMahasiswa?->kelas;
+    }
+
+    public function getMahasiswaAttribute()
+    {
+        return $this->kelasMahasiswa?->mahasiswa;
+    }
+
+    public function getMahasiswaIdAttribute()
+    {
+        return $this->kelasMahasiswa?->mahasiswa_id;
+    }
+
+    public function getKelasIdAttribute()
+    {
+        return $this->kelasMahasiswa?->kelas_id;
     }
 
     public function updater(): BelongsTo
@@ -53,25 +70,43 @@ class Nilai extends Model
         return $this->belongsTo(User::class, 'updated_by');
     }
 
-    public function isLulus(): bool
+    public function recalculate(): static
     {
-        return strtolower((string) $this->status) === 'lulus';
-    }
+        if ($this->kuis === null || $this->tugas === null || $this->uts === null || $this->uas === null) {
+            $this->nilai_akhir = null;
+            $this->grade = null;
+            $this->status = StatusNilai::BelumLengkap;
 
-    public function recalculate(): self
-    {
-        $calculator = app(NilaiCalculator::class);
+            return $this;
+        }
 
-        $result = $calculator->calculate(
-            $this->kuis !== null ? (float) $this->kuis : null,
-            $this->tugas !== null ? (float) $this->tugas : null,
-            $this->uts !== null ? (float) $this->uts : null,
-            $this->uas !== null ? (float) $this->uas : null,
-        );
+        $bobotKuis = PengaturanNilai::getBobot('kuis', 10);
+        $bobotTugas = PengaturanNilai::getBobot('tugas', 20);
+        $bobotUts = PengaturanNilai::getBobot('uts', 30);
+        $bobotUas = PengaturanNilai::getBobot('uas', 40);
 
-        $this->nilai_akhir = $result['nilai_akhir'];
-        $this->grade = $result['grade'];
-        $this->status = $result['status'];
+        $totalBobot = $bobotKuis + $bobotTugas + $bobotUts + $bobotUas;
+        if ($totalBobot <= 0) {
+            $totalBobot = 100;
+        }
+
+        $rawScore = (
+            ($this->kuis * $bobotKuis) +
+            ($this->tugas * $bobotTugas) +
+            ($this->uts * $bobotUts) +
+            ($this->uas * $bobotUas)
+        ) / $totalBobot;
+
+        $this->nilai_akhir = round($rawScore, 2);
+
+        $gradeRecord = SkalaGrade::determineGrade($this->nilai_akhir);
+        if ($gradeRecord) {
+            $this->grade = $gradeRecord->grade;
+            $this->status = $gradeRecord->is_lulus ? StatusNilai::Lulus : StatusNilai::TidakLulus;
+        } else {
+            $this->grade = 'E';
+            $this->status = StatusNilai::TidakLulus;
+        }
 
         return $this;
     }

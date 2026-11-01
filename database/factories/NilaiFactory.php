@@ -2,8 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Kelas;
-use App\Models\Mahasiswa;
+use App\Models\KelasMahasiswa;
 use App\Models\Nilai;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -25,8 +24,7 @@ class NilaiFactory extends Factory
         $uas = fake()->randomFloat(2, 50, 100);
 
         return [
-            'kelas_id' => Kelas::factory(),
-            'mahasiswa_id' => Mahasiswa::factory(),
+            'kelas_mahasiswa_id' => KelasMahasiswa::factory(),
             'kuis' => $kuis,
             'tugas' => $tugas,
             'uts' => $uts,

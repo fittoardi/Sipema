@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Dosen\DashboardController;
 use App\Http\Controllers\Dosen\NilaiController;
+use App\Http\Controllers\Dosen\PertemuanController;
+use App\Http\Controllers\Dosen\PerwalianKrsController;
+use App\Http\Controllers\Dosen\PresensiController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'role:dosen'])
@@ -18,5 +21,25 @@ Route::middleware(['auth', 'role:dosen'])
         Route::post('/dashboard/nilai', [NilaiController::class, 'store'])->name('nilai.store');
 
         Route::get('/dashboard/download-nilai', [DashboardController::class, 'downloadNilai'])->name('dashboard.download-nilai');
+
+        // Perwalian & Persetujuan KRS Online
+        Route::get('/perwalian', [PerwalianKrsController::class, 'index'])->name('perwalian.index');
+        Route::get('/perwalian/{mahasiswa}', [PerwalianKrsController::class, 'show'])->name('perwalian.show');
+        Route::post('/perwalian/{krs}/approve', [PerwalianKrsController::class, 'approve'])->name('perwalian.approve');
+        Route::post('/perwalian/{krs}/revisi', [PerwalianKrsController::class, 'revisi'])->name('perwalian.revisi');
+
+        // LMS & Perkuliahan Sesi 1-16
+        Route::get('/kelas/{kela}/pertemuan', [PertemuanController::class, 'index'])->name('pertemuan.index');
+        Route::get('/kelas/{kela}/pertemuan/{pertemuan}', [PertemuanController::class, 'show'])->name('pertemuan.show');
+        Route::put('/kelas/{kela}/pertemuan/{pertemuan}', [PertemuanController::class, 'update'])->name('pertemuan.update');
+        Route::post('/kelas/{kela}/pertemuan/{pertemuan}/toggle-presensi', [PertemuanController::class, 'togglePresensi'])->name('pertemuan.toggle-presensi');
+        Route::post('/kelas/{kela}/pertemuan/{pertemuan}/materi', [PertemuanController::class, 'storeMateri'])->name('pertemuan.materi.store');
+        Route::delete('/kelas/{kela}/pertemuan/{pertemuan}/materi/{materi}', [PertemuanController::class, 'destroyMateri'])->name('pertemuan.materi.destroy');
+        Route::post('/kelas/{kela}/pertemuan/{pertemuan}/tugas', [PertemuanController::class, 'storeTugas'])->name('pertemuan.tugas.store');
+
+        // Presensi & Galeri Verifikasi Selfie
+        Route::get('/kelas/{kela}/pertemuan/{pertemuan}/presensi', [PresensiController::class, 'index'])->name('presensi.index');
+        Route::post('/kelas/{kela}/pertemuan/{pertemuan}/presensi/{mahasiswa}', [PresensiController::class, 'update'])->name('presensi.update');
+        Route::get('/kelas/{kela}/pertemuan/{pertemuan}/presensi/export-csv', [PresensiController::class, 'exportCsv'])->name('presensi.export-csv');
 
     });

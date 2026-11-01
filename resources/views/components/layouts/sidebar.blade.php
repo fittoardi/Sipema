@@ -1,9 +1,11 @@
 @php
-	$role = auth()->user()?->role ?? null;
+	$userRole = auth()->user()?->role;
+	$role = $userRole instanceof \App\Enums\Role ? $userRole->value : (string) ($userRole ?? '');
 
 	$menus = match($role) {
 		'dosen' => [
 			['label' => 'Dashboard', 'route' => 'dosen.dashboard', 'icon' => 'home'],
+			['label' => 'Perwalian KRS', 'route' => 'dosen.perwalian.index', 'icon' => 'users'],
 			['label' => 'Mata Kuliah', 'route' => 'dosen.courses', 'icon' => 'book'],
 			['label' => 'Jadwal Mengajar', 'route' => 'dosen.schedule', 'icon' => 'calendar'],
 			['label' => 'Kelola Nilai', 'route' => 'dosen.nilai.index', 'icon' => 'clipboard'],
@@ -11,6 +13,7 @@
 		],
 		'mahasiswa' => [
 			['label' => 'Dashboard Nilai', 'route' => 'mahasiswa.dashboard', 'icon' => 'home'],
+			['label' => 'KRS Online', 'route' => 'mahasiswa.krs.index', 'icon' => 'clipboard'],
 			['label' => 'Unduh Nilai (CSV)', 'route' => 'mahasiswa.dashboard.download-nilai', 'icon' => 'download'],
 		],
 		default => [
