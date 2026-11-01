@@ -1,0 +1,30 @@
+/* ===========================
+AUTH POSTHOG TACTILE STYLES
+=========================== */
+
+.auth-card {
+    @apply bg-paper-white rounded-[6px] border border-warm-mist shadow-none;
+}
+
+.auth-input {
+    @apply w-full rounded-[4px] border border-warm-mist bg-paper-white px-3.5 py-2.5 text-sm text-deep-moss placeholder:text-ash-green transition-colors focus:border-signal-blue focus:outline-none focus:ring-1 focus:ring-signal-blue font-sans;
+}
+
+.auth-button {
+    @apply w-full rounded-[4px] bg-amber-glow py-2.5 px-4 text-sm font-bold text-deep-moss transition-colors hover:bg-dark-amber focus:outline-none focus:ring-2 focus:ring-amber-glow/40 active:translate-y-0.5 shadow-none;
+}
+
+.fade-up {
+    animation: fadeUp .3s ease-out;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

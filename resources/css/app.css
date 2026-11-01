@@ -1,0 +1,101 @@
+@import './auth.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-sandy-desk: #e1d7c2;
+    --color-paper-white: #ffffff;
+    --color-cream-paper: #fdfdf8;
+    --color-soft-linen: #eeefe9;
+    --color-pale-stone: #e5e7e0;
+    --color-deep-moss: #23251d;
+    --color-olive-char: #4d4f46;
+    --color-sage-gray: #65675e;
+    --color-ash-green: #9ea096;
+    --color-faded-pewter: #b3b3af;
+    --color-warm-mist: #bfc1b7;
+    --color-pure-black: #000000;
+    --color-signal-blue: #2f80fa;
+    --color-amber-glow: #eb9d2a;
+    --color-dark-amber: #cd8407;
+    --color-burnished-gold: #b17816;
+    --color-marigold: #f1a82c;
+    --color-flame-orange: #f54e00;
+    --color-moss-green: #6aa84f;
+  }
+
+  body {
+    background-color: var(--color-sandy-desk);
+    color: var(--color-deep-moss);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+}
+
+@layer components {
+  /* PostHog Style Signature Window */
+  .app-window {
+    @apply bg-paper-white rounded-[6px] border border-warm-mist overflow-hidden;
+  }
+
+  .window-titlebar {
+    @apply h-9 bg-cream-paper border-b border-warm-mist px-4 flex items-center justify-between text-xs font-medium text-olive-char select-none;
+  }
+
+  /* PostHog Tactile Buttons */
+  .btn-amber {
+    @apply bg-amber-glow hover:bg-dark-amber text-deep-moss font-semibold px-3.5 py-1.5 rounded-[4px] text-xs transition inline-flex items-center justify-center gap-1.5 focus:outline-none focus:ring-1 focus:ring-amber-glow cursor-pointer;
+  }
+
+  .btn-outline-gold {
+    @apply border border-burnished-gold text-burnished-gold hover:bg-pale-stone font-semibold px-3 py-1.5 rounded-[4px] text-xs transition inline-flex items-center justify-center gap-1.5 bg-paper-white focus:outline-none cursor-pointer;
+  }
+
+  .btn-mist {
+    @apply border border-warm-mist bg-paper-white hover:bg-pale-stone text-deep-moss font-medium px-3 py-1.5 rounded-[4px] text-xs transition inline-flex items-center justify-center gap-1.5 focus:outline-none cursor-pointer;
+  }
+
+  .btn-danger-mist {
+    @apply border border-rose-300 bg-rose-50/50 hover:bg-rose-100/70 text-rose-800 font-semibold px-2.5 py-1.5 rounded-[4px] text-xs transition inline-flex items-center justify-center gap-1 focus:outline-none cursor-pointer;
+  }
+
+  /* Inputs & Forms */
+  .posthog-input {
+    @apply w-full px-3 py-2 bg-paper-white border border-warm-mist rounded-[4px] text-xs text-deep-moss placeholder-ash-green focus:border-signal-blue focus:ring-1 focus:ring-signal-blue focus:outline-none transition;
+  }
+
+  .posthog-select {
+    @apply w-full px-3 py-2 bg-paper-white border border-warm-mist rounded-[4px] text-xs text-deep-moss focus:border-signal-blue focus:ring-1 focus:ring-signal-blue focus:outline-none transition;
+  }
+
+  .posthog-label {
+    @apply block text-xs font-semibold text-deep-moss mb-1;
+  }
+
+  /* Tag Pills */
+  .tag-pill {
+    @apply rounded-full px-2.5 py-0.5 text-xs font-medium inline-flex items-center gap-1;
+  }
+
+  .tag-pill-green {
+    @apply bg-moss-green text-white;
+  }
+
+  .tag-pill-orange {
+    @apply bg-flame-orange text-white;
+  }
+
+  .tag-pill-amber {
+    @apply bg-marigold text-deep-moss;
+  }
+
+  .tag-pill-blue {
+    @apply bg-signal-blue text-white;
+  }
+
+  .tag-pill-stone {
+    @apply bg-pale-stone text-deep-moss;
+  }
+}
