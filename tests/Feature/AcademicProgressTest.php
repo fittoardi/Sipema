@@ -12,6 +12,13 @@ use Illuminate\Support\Facades\Hash;
 
 uses(RefreshDatabase::class);
 
+beforeEach(function () {
+    $this->seed([
+        \Database\Seeders\PengaturanNilaiSeeder::class,
+        \Database\Seeders\SkalaGradeSeeder::class,
+    ]);
+});
+
 test('nilai is calculated from configured weights and grade rules', function () {
     $nilai = new Nilai([
         'kuis' => 100,
@@ -24,7 +31,7 @@ test('nilai is calculated from configured weights and grade rules', function () 
 
     expect((float) $nilai->nilai_akhir)->toBe(71.0)
         ->and($nilai->grade)->toBe('B')
-        ->and($nilai->status)->toBe('Lulus');
+        ->and($nilai->status->label())->toBe('Lulus');
 });
 
 test('dosen can save scores only for enrolled students in owned classes', function () {

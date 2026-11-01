@@ -9,10 +9,17 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            PengaturanNilaiSeeder::class,
+            SkalaGradeSeeder::class,
+            TahunAkademikSeeder::class,
             ProdiSeeder::class,
+            RuanganSeeder::class,
             AdminSeeder::class,
             DosenSeeder::class,
             MahasiswaSeeder::class,
+            MataKuliahSeeder::class,
+            KelasSeeder::class,
+            NilaiSeeder::class,
         ]);
     }
 }

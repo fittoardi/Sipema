@@ -1,14 +1,22 @@
-<header class="bg-white shadow-sm">
-	<div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8 flex items-center justify-between">
-		<h1 class="text-lg font-semibold">{{ $title ?? 'Dashboard' }}</h1>
+@php
+    $navRole = auth()->user()?->role;
+    $navRoleStr = $navRole instanceof \App\Enums\Role ? $navRole->value : (string) ($navRole ?? 'user');
+    $navRoleLabel = $navRole instanceof \App\Enums\Role ? $navRole->label() : (string) ($navRole ?? 'User');
+@endphp
 
-		<div class="flex items-center gap-4">
-			<span class="text-sm text-gray-600">{{ auth()->user()?->name }}</span>
+<header class="window-titlebar flex-shrink-0 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+        <button @click="sidebarOpen = true" class="lg:hidden p-1 mr-1 text-sage-gray hover:text-deep-moss">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <span class="font-mono text-sage-gray text-xs truncate max-w-[150px] sm:max-w-none">sielma://workspace/{{ strtolower($navRoleStr) }}</span>
+    </div>
 
-			<form method="POST" action="{{ route('logout') }}">
-				@csrf
-				<button type="submit" class="text-sm text-red-600">Logout</button>
-			</form>
-		</div>
-	</div>
+    <div class="font-semibold text-deep-moss text-xs">
+        {{ $title ?? 'Workspace' }}
+    </div>
+
+    <div class="flex items-center gap-3">
+        <span class="tag-pill tag-pill-stone text-[10px] font-mono">{{ $navRoleLabel }}</span>
+    </div>
 </header>

@@ -2,28 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-
-class Prodi extends Model
+/**
+ * Alias for ProgramStudi to ensure backwards compatibility with legacy code/tests.
+ */
+class Prodi extends ProgramStudi
 {
-    protected $fillable = [
-        'kode_prodi',
-        'nama_prodi',
-    ];
-
-    public function mahasiswas(): HasMany
-    {
-        return $this->hasMany(Mahasiswa::class);
-    }
-
-    public function dosens(): HasMany
-    {
-        return $this->hasMany(Dosen::class);
-    }
-
-    public function mataKuliahs(): HasMany
-    {
-        return $this->hasMany(MataKuliah::class);
-    }
+    //
 }

@@ -160,7 +160,7 @@ class LoginTest extends TestCase
     /** @test */
     public function authenticated_user_cannot_access_login_page()
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
         $this->actingAs($user);
@@ -173,7 +173,7 @@ class LoginTest extends TestCase
     /** @test */
     public function authenticated_user_can_logout()
     {
-        /** @var \App\Models\User $user */
+        /** @var User $user */
         $user = User::factory()->create();
 
         $this->actingAs($user);

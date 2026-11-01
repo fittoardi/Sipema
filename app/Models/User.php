@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Panel;
+use App\Enums\Role;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable implements FilamentUser
+#[UseEloquentBuilder(Builder::class)]
+class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
@@ -29,12 +31,23 @@ class User extends Authenticatable implements FilamentUser
     {
         return [
             'password' => 'hashed',
+            'role' => Role::class,
         ];
     }
 
-    public function canAccessPanel(Panel $panel): bool
+    public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return $this->role === Role::Admin || $this->role === 'admin';
+    }
+
+    public function isDosen(): bool
+    {
+        return $this->role === Role::Dosen || $this->role === 'dosen';
+    }
+
+    public function isMahasiswa(): bool
+    {
+        return $this->role === Role::Mahasiswa || $this->role === 'mahasiswa';
     }
 
     public function mahasiswa(): HasOne

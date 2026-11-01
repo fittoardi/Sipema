@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 | Authentication (Mahasiswa & Dosen)
 |--------------------------------------------------------------------------
-| Admin menggunakan Filament (/admin)
+| Admin: /admin/dashboard
 */
 
 Route::middleware('guest')->group(function () {

@@ -9,34 +9,24 @@ class ProdiSeeder extends Seeder
 {
     public function run(): void
     {
-        $prodis = [
-            [
-                'kode_prodi' => 'TI',
-                'nama_prodi' => 'Teknik Informatika',
-            ],
-            [
-                'kode_prodi' => 'SI',
-                'nama_prodi' => 'Sistem Informasi',
-            ],
-            [
-                'kode_prodi' => 'MI',
-                'nama_prodi' => 'Manajemen Informatika',
-            ],
-            [
-                'kode_prodi' => 'TE',
-                'nama_prodi' => 'Teknik Elektro',
-            ],
-            [
-                'kode_prodi' => 'TM',
-                'nama_prodi' => 'Teknik Mesin',
-            ],
+        $initialProdis = [
+            ['kode' => 'TI', 'nama' => 'Teknik Informatika'],
+            ['kode' => 'SI', 'nama' => 'Sistem Informasi'],
+            ['kode' => 'MI', 'nama' => 'Manajemen Informatika'],
+            ['kode' => 'TE', 'nama' => 'Teknik Elektro'],
+            ['kode' => 'TM', 'nama' => 'Teknik Mesin'],
         ];
 
-        foreach ($prodis as $prodi) {
+        foreach ($initialProdis as $prodi) {
             Prodi::updateOrCreate(
-                ['kode_prodi' => $prodi['kode_prodi']],
-                ['nama_prodi' => $prodi['nama_prodi']],
+                ['kode' => $prodi['kode']],
+                ['nama' => $prodi['nama']],
             );
+        }
+
+        $currentCount = Prodi::count();
+        if ($currentCount < 30) {
+            Prodi::factory()->count(30 - $currentCount)->create();
         }
     }
 }

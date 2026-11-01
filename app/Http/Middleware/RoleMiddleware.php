@@ -4,8 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class RoleMiddleware
 {
@@ -15,7 +15,11 @@ class RoleMiddleware
             return redirect()->route('login');
         }
 
-        if (Auth::user()->role !== $role) {
+        $userRole = Auth::user()->role instanceof \App\Enums\Role
+            ? Auth::user()->role->value
+            : (string) Auth::user()->role;
+
+        if ($userRole !== $role) {
             abort(403);
         }
 
