@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Dosen;
 
 use App\Concerns\StreamsCsv;
+use App\Enums\Hari;
+use App\Enums\StatusNilai;
 use App\Http\Controllers\Controller;
 use App\Models\Dosen;
-use App\Models\Jadwal;
 use App\Models\Kelas;
 use App\Models\Nilai;
 use Illuminate\Contracts\View\View;
@@ -83,7 +84,7 @@ class DashboardController extends Controller
                     'kelas_id' => $k->id,
                     'kelas' => $k,
                     'mataKuliah' => $k->mataKuliah,
-                    'hari' => $k->hari instanceof \App\Enums\Hari ? $k->hari->value : (string) ($k->hari ?? 'Senin'),
+                    'hari' => $k->hari instanceof Hari ? $k->hari->value : (string) ($k->hari ?? 'Senin'),
                     'jam_mulai' => (string) ($k->jam_mulai ?? '08:00:00'),
                     'jam_selesai' => (string) ($k->jam_selesai ?? '10:00:00'),
                     'ruangan' => $k->ruangan?->nama ?? 'Ruang Kelas',
@@ -134,7 +135,7 @@ class DashboardController extends Controller
             number_format((float) $nilai->uas, 2, '.', ''),
             number_format((float) $nilai->nilai_akhir, 2, '.', ''),
             $nilai->grade,
-            $nilai->status instanceof \App\Enums\StatusNilai ? $nilai->status->label() : (string) ($nilai->status ?? '-'),
+            $nilai->status instanceof StatusNilai ? $nilai->status->label() : (string) ($nilai->status ?? '-'),
         ]);
     }
 }

@@ -17,4 +17,3 @@ it('detects overlapping time intervals correctly', function () {
     // Distinct non-overlapping: 08:00 - 10:00 and 13:00 - 15:00
     expect($detector->hasTimeOverlap('08:00', '10:00', '13:00', '15:00'))->toBeFalse();
 });
-

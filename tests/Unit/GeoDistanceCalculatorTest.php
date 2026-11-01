@@ -30,4 +30,3 @@ it('determines if user is within radius', function () {
     expect($calculator->isWithinRadius($userLat, $userLon, $targetLat, $targetLon, 50))->toBeTrue();
     expect($calculator->isWithinRadius($userLat, $userLon, $targetLat, $targetLon, 5))->toBeFalse();
 });
-

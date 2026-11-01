@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Mahasiswa;
 
 use App\Concerns\StreamsCsv;
+use App\Enums\StatusNilai;
 use App\Http\Controllers\Controller;
 use App\Models\Kelas;
 use App\Models\Mahasiswa;
@@ -75,7 +76,7 @@ class DashboardController extends Controller
             number_format((float) $nilai->uas, 2, '.', ''),
             number_format((float) $nilai->nilai_akhir, 2, '.', ''),
             $nilai->grade,
-            $nilai->status instanceof \App\Enums\StatusNilai ? $nilai->status->label() : (string) ($nilai->status ?? '-'),
+            $nilai->status instanceof StatusNilai ? $nilai->status->label() : (string) ($nilai->status ?? '-'),
         ]);
     }
 }

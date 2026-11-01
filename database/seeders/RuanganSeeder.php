@@ -70,4 +70,3 @@ class RuanganSeeder extends Seeder
         }
     }
 }
-

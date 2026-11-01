@@ -86,4 +86,3 @@ class JadwalConflictDetector
         return null;
     }
 }
-

@@ -4,10 +4,8 @@ namespace App\Services;
 
 namespace App\Http\Controllers\Mahasiswa;
 
-use App\Enums\StatusKrs;
 use App\Http\Controllers\Controller;
 use App\Models\Kelas;
-use App\Models\KelasMahasiswa;
 use App\Models\Mahasiswa;
 use App\Models\TahunAkademik;
 use App\Services\KrsService;
@@ -155,4 +153,3 @@ class KrsController extends Controller
         ]);
     }
 }
-

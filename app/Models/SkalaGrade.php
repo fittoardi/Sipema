@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 #[UseEloquentBuilder(Builder::class)]
@@ -37,7 +38,7 @@ class SkalaGrade extends Model
             return static::orderBy('urutan', 'asc')->get();
         });
 
-        if (! ($grades instanceof \Illuminate\Support\Collection)) {
+        if (! ($grades instanceof Collection)) {
             $grades = static::orderBy('urutan', 'asc')->get();
         }
 
@@ -47,7 +48,7 @@ class SkalaGrade extends Model
             }
         }
 
-        return $grades instanceof \Illuminate\Support\Collection ? $grades->last() : static::orderBy('urutan', 'desc')->first();
+        return $grades instanceof Collection ? $grades->last() : static::orderBy('urutan', 'desc')->first();
     }
 
     public static function clearCache(): void

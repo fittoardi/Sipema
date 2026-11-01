@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -27,17 +28,17 @@ class Materi extends Model
         'urutan',
     ];
 
-    protected function url(): \Illuminate\Database\Eloquent\Casts\Attribute
+    protected function url(): Attribute
     {
-        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
+        return Attribute::make(
             get: fn () => $this->attributes['konten_atau_url'] ?? null,
             set: fn ($val) => ['konten_atau_url' => $val],
         );
     }
 
-    protected function konten(): \Illuminate\Database\Eloquent\Casts\Attribute
+    protected function konten(): Attribute
     {
-        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
+        return Attribute::make(
             get: fn () => $this->attributes['konten_atau_url'] ?? null,
             set: fn ($val) => ['konten_atau_url' => $val],
         );
@@ -60,4 +61,3 @@ class Materi extends Model
         return $this->hasMany(ProgresMateri::class, 'materi_id');
     }
 }
-

@@ -16,4 +16,3 @@ enum Hari: string
         return $this->value;
     }
 }
-

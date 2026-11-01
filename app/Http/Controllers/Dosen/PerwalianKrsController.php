@@ -120,4 +120,3 @@ class PerwalianKrsController extends Controller
         return back()->with('success', "Status KRS mahasiswa {$krs->mahasiswa->nama} diubah menjadi 'Perlu Revisi'. Catatan telah dikirimkan.");
     }
 }
-

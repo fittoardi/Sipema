@@ -1,21 +1,23 @@
 <?php
 
 use App\Models\Dosen;
-use App\Models\Jadwal;
 use App\Models\Kelas;
 use App\Models\Mahasiswa;
 use App\Models\MataKuliah;
 use App\Models\Nilai;
 use App\Models\Prodi;
+use App\Models\Ruangan;
 use App\Models\User;
+use Database\Seeders\PengaturanNilaiSeeder;
+use Database\Seeders\SkalaGradeSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->seed([
-        \Database\Seeders\PengaturanNilaiSeeder::class,
-        \Database\Seeders\SkalaGradeSeeder::class,
+        PengaturanNilaiSeeder::class,
+        SkalaGradeSeeder::class,
     ]);
 
     $this->prodi = Prodi::create([
@@ -45,7 +47,7 @@ beforeEach(function () {
         'prodi_id' => $this->prodi->id,
     ]);
 
-    $this->ruangan = \App\Models\Ruangan::create([
+    $this->ruangan = Ruangan::create([
         'kode' => 'LAB1',
         'nama' => 'Lab Komputer 1',
         'kapasitas' => 40,

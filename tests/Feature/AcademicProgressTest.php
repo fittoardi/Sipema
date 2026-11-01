@@ -7,6 +7,8 @@ use App\Models\MataKuliah;
 use App\Models\Nilai;
 use App\Models\Prodi;
 use App\Models\User;
+use Database\Seeders\PengaturanNilaiSeeder;
+use Database\Seeders\SkalaGradeSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 
@@ -14,8 +16,8 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->seed([
-        \Database\Seeders\PengaturanNilaiSeeder::class,
-        \Database\Seeders\SkalaGradeSeeder::class,
+        PengaturanNilaiSeeder::class,
+        SkalaGradeSeeder::class,
     ]);
 });
 

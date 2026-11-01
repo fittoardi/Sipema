@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 #[UseEloquentBuilder(Builder::class)]
 class Kelas extends Model
@@ -105,7 +106,7 @@ class Kelas extends Model
     {
         return collect([
             (object) [
-                'hari' => $this->hari instanceof \App\Enums\Hari ? $this->hari->value : (string) ($this->hari ?? '-'),
+                'hari' => $this->hari instanceof Hari ? $this->hari->value : (string) ($this->hari ?? '-'),
                 'jam_mulai' => (string) ($this->jam_mulai ?? '08:00:00'),
                 'jam_selesai' => (string) ($this->jam_selesai ?? '10:00:00'),
                 'ruangan' => $this->ruangan?->nama ?? ($this->tipe_kelas === TipeKelas::Online ? 'Online / Zoom' : 'Ruang Kelas'),
@@ -153,7 +154,7 @@ class Kelas extends Model
         return $this->kelasMahasiswa();
     }
 
-    public function nilais(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    public function nilais(): HasManyThrough
     {
         return $this->hasManyThrough(Nilai::class, KelasMahasiswa::class, 'kelas_id', 'kelas_mahasiswa_id');
     }

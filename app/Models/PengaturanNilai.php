@@ -29,7 +29,7 @@ class PengaturanNilai extends Model
 
     public static function getBobot(string $komponen, float $default = 0): float
     {
-        return Cache::remember('bobot_nilai_' . $komponen, 3600, function () use ($komponen, $default) {
+        return Cache::remember('bobot_nilai_'.$komponen, 3600, function () use ($komponen, $default) {
             $record = static::where('komponen', $komponen)->first();
 
             return $record ? (float) $record->bobot : $default;

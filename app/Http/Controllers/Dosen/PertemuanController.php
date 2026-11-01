@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Dosen;
 
-use App\Enums\ModePertemuan;
 use App\Http\Controllers\Controller;
 use App\Models\Dosen;
 use App\Models\Kelas;
@@ -193,4 +192,3 @@ class PertemuanController extends Controller
         return back()->with('success', 'Penugasan baru berhasil dibuat.');
     }
 }
-

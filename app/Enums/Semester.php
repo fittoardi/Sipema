@@ -12,4 +12,3 @@ enum Semester: string
         return $this->value;
     }
 }
-

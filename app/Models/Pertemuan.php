@@ -86,4 +86,3 @@ class Pertemuan extends Model
         return $this->hasMany(Diskusi::class, 'pertemuan_id')->whereNull('parent_id');
     }
 }
-

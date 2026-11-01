@@ -42,4 +42,3 @@ class KelasMahasiswa extends Model
         return $this->hasOne(Nilai::class, 'kelas_mahasiswa_id');
     }
 }
-

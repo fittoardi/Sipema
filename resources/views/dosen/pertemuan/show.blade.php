@@ -225,15 +225,22 @@
                 {{-- Existing Assignments --}}
                 <div class="space-y-2">
                     @forelse($pertemuan->tugas as $t)
-                        <div class="p-2.5 rounded-[4px] bg-paper-white border border-warm-mist space-y-1 text-xs">
+                        <div class="p-2.5 rounded-[4px] bg-paper-white border border-warm-mist space-y-1.5 text-xs">
                             <div class="flex items-center justify-between">
-                                <span class="font-bold text-deep-moss">{{ $t->judul }}</span>
+                                <a href="{{ route('dosen.tugas.show', [$kelas, $pertemuan, $t]) }}" class="font-bold text-signal-blue hover:underline">
+                                    {{ $t->judul }} &rarr;
+                                </a>
                                 <span class="tag-pill tag-pill-stone text-[9px]">{{ $t->pengumpulans->count() }} Dikumpulkan</span>
                             </div>
                             <div class="text-[10px] text-olive-char font-mono">
                                 Deadline: {{ \Carbon\Carbon::parse($t->batas_waktu)->format('d/m/Y H:i') }}
                             </div>
                             <p class="text-[11px] text-deep-moss line-clamp-2 mt-1">{{ $t->instruksi }}</p>
+                            <div class="pt-1 border-t border-warm-mist flex justify-end">
+                                <a href="{{ route('dosen.tugas.show', [$kelas, $pertemuan, $t]) }}" class="inline-flex items-center gap-1 text-[10px] font-bold text-deep-moss hover:text-signal-blue">
+                                    Lihat & Nilai Tugas &rarr;
+                                </a>
+                            </div>
                         </div>
                     @empty
                         <div class="text-center py-4 text-olive-char font-mono text-xs">

@@ -25,4 +25,3 @@ return new class extends Migration
         Schema::dropIfExists('mata_kuliah');
     }
 };
-

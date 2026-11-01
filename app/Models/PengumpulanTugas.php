@@ -45,4 +45,3 @@ class PengumpulanTugas extends Model
         return $this->belongsTo(Mahasiswa::class, 'mahasiswa_id');
     }
 }
-

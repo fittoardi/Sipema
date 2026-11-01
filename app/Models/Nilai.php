@@ -17,6 +17,7 @@ class Nilai extends Model
     protected $table = 'nilai';
 
     protected $tempKelasId;
+
     protected $tempMahasiswaId;
 
     protected $fillable = [

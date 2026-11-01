@@ -47,4 +47,3 @@ test('non-admin visiting /admin or /admin/dashboard receives forbidden', functio
     $this->actingAs($student)->get('/admin')->assertForbidden();
     $this->actingAs($student)->get('/admin/dashboard')->assertForbidden();
 });
-

@@ -178,4 +178,3 @@ it('generates PDF for student KRS', function () {
     $pdfResponse->assertSuccessful()
         ->assertHeader('Content-Type', 'application/pdf');
 });
-

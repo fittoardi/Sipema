@@ -26,4 +26,3 @@ class KelasMahasiswaFactory extends Factory
         ];
     }
 }
-

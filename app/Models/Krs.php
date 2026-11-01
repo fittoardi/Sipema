@@ -68,4 +68,3 @@ class Krs extends Model
             ->withTimestamps();
     }
 }
-

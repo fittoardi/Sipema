@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Dosen\StoreNilaiRequest;
 use App\Models\Dosen;
 use App\Models\Kelas;
+use App\Models\KelasMahasiswa;
 use App\Models\Nilai;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -49,7 +50,7 @@ class NilaiController extends Controller
 
         abort_unless($kelas->mahasiswas()->whereKey($validated['mahasiswa_id'])->exists(), 403);
 
-        $km = \App\Models\KelasMahasiswa::firstOrCreate([
+        $km = KelasMahasiswa::firstOrCreate([
             'kelas_id' => $kelas->id,
             'mahasiswa_id' => $validated['mahasiswa_id'],
         ]);

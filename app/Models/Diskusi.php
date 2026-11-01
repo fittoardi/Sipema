@@ -43,4 +43,3 @@ class Diskusi extends Model
         return $this->hasMany(Diskusi::class, 'parent_id')->orderBy('created_at', 'asc');
     }
 }
-

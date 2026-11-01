@@ -47,4 +47,3 @@ class Ruangan extends Model
         return $this->hasMany(Pertemuan::class, 'ruangan_id');
     }
 }
-

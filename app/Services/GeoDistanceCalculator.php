@@ -41,4 +41,3 @@ class GeoDistanceCalculator
         return $distance <= ($radiusMeters + $toleranceMeters);
     }
 }
-

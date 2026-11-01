@@ -124,7 +124,8 @@
                     <tbody class="divide-y divide-warm-mist bg-paper-white">
                         @forelse ($nilais as $n)
                             @php
-                                $isLulus = strtolower($n->status) === 'lulus';
+                                $statusStr = $n->status instanceof \App\Enums\StatusNilai ? $n->status->value : (string) ($n->status ?? '');
+                                $isLulus = strtolower($statusStr) === 'lulus';
                             @endphp
                             <tr class="hover:bg-cream-paper transition-colors">
                                 <td class="px-4 py-3">
@@ -140,16 +141,16 @@
                                 <td class="px-3 py-3 text-center font-mono text-deep-moss">{{ $n->uts }}</td>
                                 <td class="px-3 py-3 text-center font-mono text-deep-moss">{{ $n->uas }}</td>
                                 <td class="px-4 py-3 text-center font-mono font-bold text-deep-moss text-sm">
-                                    {{ number_format($n->nilai_akhir, 2) }}
+                                    {{ number_format((float) ($n->nilai_akhir ?? 0), 2) }}
                                 </td>
                                 <td class="px-3 py-3 text-center">
                                     <span class="tag-pill font-mono font-bold text-xs bg-soft-linen text-deep-moss border border-warm-mist px-2.5">
-                                        {{ $n->grade }}
+                                        {{ $n->grade ?? '-' }}
                                     </span>
                                 </td>
                                 <td class="px-4 py-3 text-center">
-                                    <span class="tag-pill text-[11px] {{ $isLulus ? 'tag-pill-moss' : 'tag-pill-flame' }}">
-                                        {{ $n->status }}
+                                    <span class="tag-pill text-[11px] {{ $isLulus ? 'tag-pill-green' : 'tag-pill-orange' }}">
+                                        {{ $n->status instanceof \App\Enums\StatusNilai ? $n->status->label() : (string) ($n->status ?? '-') }}
                                     </span>
                                 </td>
                             </tr>

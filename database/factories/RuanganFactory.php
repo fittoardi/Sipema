@@ -29,4 +29,3 @@ class RuanganFactory extends Factory
         ];
     }
 }
-

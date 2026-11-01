@@ -43,4 +43,3 @@ class Tugas extends Model
         return $this->hasMany(PengumpulanTugas::class, 'tugas_id');
     }
 }
-

@@ -55,4 +55,3 @@ class ProgramStudi extends Model
         return $this->hasMany(MataKuliah::class, 'program_studi_id');
     }
 }
-

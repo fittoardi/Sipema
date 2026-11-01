@@ -14,7 +14,6 @@ use App\Models\Ruangan;
 use App\Models\TahunAkademik;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
@@ -202,4 +201,3 @@ it('restricts selfie photo download to authorized parties only', function () {
         ->get(route('foto-presensi.show', $presensi->id))
         ->assertForbidden();
 });
-

@@ -3,10 +3,21 @@
 	$role = $userRole instanceof \App\Enums\Role ? $userRole->value : (string) ($userRole ?? '');
 
 	$menus = match($role) {
+		'admin' => [
+			['label' => 'Dashboard', 'route' => 'admin.dashboard', 'icon' => 'home'],
+			['label' => 'Program Studi', 'route' => 'admin.prodi.index', 'icon' => 'building'],
+			['label' => 'Dosen Pengajar', 'route' => 'admin.dosen.index', 'icon' => 'users'],
+			['label' => 'Mahasiswa', 'route' => 'admin.mahasiswa.index', 'icon' => 'academic-cap'],
+			['label' => 'Mata Kuliah', 'route' => 'admin.matakuliah.index', 'icon' => 'book'],
+			['label' => 'Rombel Kelas', 'route' => 'admin.kelas.index', 'icon' => 'calendar'],
+			['label' => 'Rekap Nilai', 'route' => 'admin.nilai.index', 'icon' => 'clipboard'],
+			['label' => 'Pengaturan Nilai', 'route' => 'admin.pengaturan-nilai.index', 'icon' => 'cog'],
+			['label' => 'Laporan Akademik', 'route' => 'admin.laporan.index', 'icon' => 'document-report'],
+		],
 		'dosen' => [
 			['label' => 'Dashboard', 'route' => 'dosen.dashboard', 'icon' => 'home'],
 			['label' => 'Perwalian KRS', 'route' => 'dosen.perwalian.index', 'icon' => 'users'],
-			['label' => 'Mata Kuliah', 'route' => 'dosen.courses', 'icon' => 'book'],
+			['label' => 'Mata Kuliah & LMS', 'route' => 'dosen.courses', 'icon' => 'book'],
 			['label' => 'Jadwal Mengajar', 'route' => 'dosen.schedule', 'icon' => 'calendar'],
 			['label' => 'Kelola Nilai', 'route' => 'dosen.nilai.index', 'icon' => 'clipboard'],
 			['label' => 'Unduh CSV Nilai', 'route' => 'dosen.dashboard.download-nilai', 'icon' => 'download'],
