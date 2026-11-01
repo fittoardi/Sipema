@@ -2,69 +2,65 @@
 
 @section('title', 'Dosen Pengajar')
 @section('header', 'Dosen Pengajar')
+@section('window_file', 'dosen.sys')
 
 @section('content')
-<div class="space-y-6">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+<div class="space-y-4">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-            <h1 class="text-xl font-extrabold text-slate-800 tracking-tight">Daftar Dosen Pengajar</h1>
-            <p class="text-xs text-slate-500 mt-0.5">Kelola data tenaga pengajar dan penugasan homebase program studi</p>
+            <h1 class="text-base font-bold text-deep-moss">Daftar Dosen Pengajar</h1>
+            <p class="text-xs text-olive-char mt-0.5">Kelola data tenaga pendidik, NIP, NIDN, dan alokasi homebase.</p>
         </div>
-        <a href="{{ route('admin.dosen.create') }}"
-           class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs shadow-blue-500/20 transition">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        <a href="{{ route('admin.dosen.create') }}" class="btn-amber">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             Tambah Dosen
         </a>
     </div>
 
-    <div class="rounded-2xl bg-white shadow-xs border border-slate-200/80 overflow-hidden">
-        <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total {{ $dosens->count() }} Dosen Pengajar</span>
+    <div class="bg-paper-white border border-warm-mist rounded-[4px] overflow-hidden">
+        <div class="px-4 py-2.5 border-b border-warm-mist bg-cream-paper flex items-center justify-between text-xs">
+            <span class="font-bold text-deep-moss">Daftar Dosen</span>
+            <span class="font-mono text-sage-gray">{{ $dosens->count() }} staf pengajar</span>
         </div>
 
         <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm">
-                <thead class="bg-slate-50 text-slate-600 border-b border-slate-200/80 text-xs font-semibold uppercase tracking-wider">
+            <table class="w-full text-left text-xs">
+                <thead class="bg-cream-paper border-b border-warm-mist font-semibold text-olive-char uppercase tracking-wider">
                     <tr>
-                        <th class="px-6 py-3.5">NIP / Identitas</th>
-                        <th class="px-6 py-3.5">Nama Dosen</th>
-                        <th class="px-6 py-3.5">Email</th>
-                        <th class="px-6 py-3.5">Program Studi</th>
-                        <th class="px-6 py-3.5 text-right">Aksi</th>
+                        <th class="px-4 py-2.5">NIP & NIDN</th>
+                        <th class="px-4 py-2.5">Nama Dosen</th>
+                        <th class="px-4 py-2.5">Email</th>
+                        <th class="px-4 py-2.5">Homebase Prodi</th>
+                        <th class="px-4 py-2.5 text-right">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
+                <tbody class="divide-y divide-warm-mist">
                     @forelse($dosens as $dosen)
-                        <tr class="hover:bg-slate-50/75 transition-colors">
-                            <td class="px-6 py-4">
-                                <span class="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 border border-slate-200">
-                                    {{ $dosen->nip }}
-                                </span>
+                        <tr class="hover:bg-cream-paper transition">
+                            <td class="px-4 py-3 font-mono">
+                                <div class="font-bold text-deep-moss">{{ $dosen->nip }}</div>
+                                <div class="text-[11px] text-sage-gray">NIDN: {{ $dosen->nidn ?? '-' }}</div>
                             </td>
-                            <td class="px-6 py-4">
-                                <div class="font-semibold text-slate-900">{{ $dosen->nama }}</div>
+                            <td class="px-4 py-3 font-bold text-deep-moss">
+                                {{ $dosen->nama }}
                             </td>
-                            <td class="px-6 py-4">
-                                <span class="text-xs text-slate-600 font-mono">{{ $dosen->email }}</span>
+                            <td class="px-4 py-3 font-mono text-sage-gray">
+                                {{ $dosen->email }}
                             </td>
-                            <td class="px-6 py-4">
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700">
+                            <td class="px-4 py-3">
+                                <span class="tag-pill tag-pill-stone text-[10px]">
                                     {{ $dosen->prodi->nama_prodi ?? '-' }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-right">
-                                <div class="inline-flex items-center gap-2">
-                                    <a href="{{ route('admin.dosen.edit', $dosen) }}"
-                                       class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition">
-                                        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                            <td class="px-4 py-3 text-right">
+                                <div class="inline-flex items-center gap-1.5">
+                                    <a href="{{ route('admin.dosen.edit', $dosen) }}" class="btn-mist">
                                         Edit
                                     </a>
-                                    <form action="{{ route('admin.dosen.destroy', $dosen) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data dosen ini?')">
+                                    <form action="{{ route('admin.dosen.destroy', $dosen) }}" method="POST" class="inline" onsubmit="return confirm('Hapus data dosen ini?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit"
-                                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-semibold transition">
-                                            <svg class="w-3.5 h-3.5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                        <button type="submit" class="btn-danger-mist">
                                             Hapus
                                         </button>
                                     </form>
@@ -73,9 +69,8 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-slate-400">
-                                <p class="text-sm font-medium text-slate-600">Belum ada dosen pengajar.</p>
-                                <p class="text-xs text-slate-400 mt-0.5">Klik tombol Tambah Dosen untuk mendaftarkan dosen baru.</p>
+                            <td colspan="5" class="px-4 py-8 text-center text-xs text-sage-gray">
+                                Belum ada dosen yang terdaftar.
                             </td>
                         </tr>
                     @endforelse

@@ -1,14 +1,13 @@
-<header class="bg-white shadow-sm">
-	<div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8 flex items-center justify-between">
-		<h1 class="text-lg font-semibold">{{ $title ?? 'Dashboard' }}</h1>
+<header class="window-titlebar flex-shrink-0">
+    <div class="flex items-center gap-2">
+        <span class="font-mono text-sage-gray text-xs">sipenma://workspace/{{ strtolower(auth()->user()?->role ?? 'user') }}</span>
+    </div>
 
-		<div class="flex items-center gap-4">
-			<span class="text-sm text-gray-600">{{ auth()->user()?->name }}</span>
+    <div class="font-semibold text-deep-moss text-xs">
+        {{ $title ?? 'Workspace' }}
+    </div>
 
-			<form method="POST" action="{{ route('logout') }}">
-				@csrf
-				<button type="submit" class="text-sm text-red-600">Logout</button>
-			</form>
-		</div>
-	</div>
+    <div class="flex items-center gap-3">
+        <span class="tag-pill tag-pill-stone text-[10px] font-mono">{{ auth()->user()?->role }}</span>
+    </div>
 </header>

@@ -16,13 +16,13 @@
     ])
 </head>
 
-<body class="min-h-screen overflow-x-hidden bg-slate-100">
+<body class="min-h-screen overflow-x-hidden bg-sandy-desk text-deep-moss selection:bg-amber-glow/30 selection:text-deep-moss antialiased font-sans">
 
-    {{-- Background Blur --}}
+    {{-- Background Canvas --}}
     @include('partials.background')
 
     {{-- Content --}}
-    <main class="relative z-10">
+    <main class="relative z-10 flex min-h-screen flex-col justify-center">
         {{ $slot }}
     </main>
 

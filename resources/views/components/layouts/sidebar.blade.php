@@ -3,42 +3,78 @@
 
 	$menus = match($role) {
 		'dosen' => [
-			['label' => 'Dashboard', 'route' => 'dosen.dashboard'],
-			['label' => 'Mata Kuliah', 'route' => 'dosen.courses'],
-			['label' => 'Jadwal Mengajar', 'route' => 'dosen.schedule'],
-			['label' => 'Kelola Nilai', 'route' => 'dosen.nilai.index'],
-			['label' => 'Unduh CSV Nilai', 'route' => 'dosen.dashboard.download-nilai'],
+			['label' => 'Dashboard', 'route' => 'dosen.dashboard', 'icon' => 'home'],
+			['label' => 'Mata Kuliah', 'route' => 'dosen.courses', 'icon' => 'book'],
+			['label' => 'Jadwal Mengajar', 'route' => 'dosen.schedule', 'icon' => 'calendar'],
+			['label' => 'Kelola Nilai', 'route' => 'dosen.nilai.index', 'icon' => 'clipboard'],
+			['label' => 'Unduh CSV Nilai', 'route' => 'dosen.dashboard.download-nilai', 'icon' => 'download'],
 		],
 		'mahasiswa' => [
-			['label' => 'Dashboard', 'route' => 'mahasiswa.dashboard'],
-			['label' => 'Unduh Nilai (CSV)', 'route' => 'mahasiswa.dashboard.download-nilai'],
+			['label' => 'Dashboard Nilai', 'route' => 'mahasiswa.dashboard', 'icon' => 'home'],
+			['label' => 'Unduh Nilai (CSV)', 'route' => 'mahasiswa.dashboard.download-nilai', 'icon' => 'download'],
 		],
 		default => [
-			['label' => 'Dashboard', 'route' => 'login'],
+			['label' => 'Dashboard', 'route' => 'login', 'icon' => 'home'],
 		],
 	};
 @endphp
 
-<aside class="col-span-12 lg:col-span-2 xl:col-span-2 bg-white shadow p-4">
-	<div class="mb-6 flex items-center gap-3">
-		<img src="{{ asset('images/logo.png') }}" alt="logo" class="h-10 w-10 object-contain" onerror="this.style.display='none'">
-		<div>
-			<div class="font-bold text-slate-800">{{ config('app.name', 'SIPEMA') }}</div>
-			<div class="text-xs text-blue-600 font-semibold uppercase tracking-wider">{{ $role ?? 'User' }}</div>
+<aside class="w-60 bg-cream-paper border border-warm-mist rounded-window flex-shrink-0 flex flex-col justify-between overflow-hidden">
+	<div>
+		<!-- Window Header -->
+		<div class="px-4 py-3 border-b border-warm-mist bg-soft-linen flex items-center justify-between">
+			<div class="flex items-center gap-2">
+				<span class="w-2.5 h-2.5 rounded-full bg-rose-400 border border-rose-500/50"></span>
+				<span class="w-2.5 h-2.5 rounded-full bg-amber-400 border border-amber-500/50"></span>
+				<span class="w-2.5 h-2.5 rounded-full bg-emerald-400 border border-emerald-500/50"></span>
+			</div>
+			<span class="font-mono text-[11px] text-sage-gray">sipenma://portal</span>
 		</div>
+
+		<!-- Identity Badge -->
+		<div class="px-4 py-3.5 border-b border-warm-mist bg-paper-white flex items-center gap-2.5">
+			<div class="w-7 h-7 rounded-[4px] bg-amber-glow flex items-center justify-center text-deep-moss font-bold text-xs border border-burnished-gold">
+				{{ strtoupper(substr($role ?? 'U', 0, 1)) }}
+			</div>
+			<div>
+				<div class="font-bold text-xs tracking-tight text-deep-moss uppercase">{{ config('app.name', 'SIPENMA') }}</div>
+				<div class="text-[10px] font-mono text-olive-char uppercase tracking-wider">{{ $role }} Portal</div>
+			</div>
+		</div>
+
+		<!-- Menu list -->
+		<nav class="p-2 space-y-0.5 overflow-y-auto text-xs">
+			@foreach($menus as $item)
+				@php
+					$isActive = isset($item['route']) && request()->routeIs($item['route']);
+					$href = isset($item['route']) ? (Route::has($item['route']) ? route($item['route']) : ($item['url'] ?? '#')) : ($item['url'] ?? '#');
+				@endphp
+
+				<a href="{{ $href }}"
+				   class="flex items-center gap-2.5 px-2.5 py-2 rounded-[4px] font-medium transition {{ $isActive ? 'bg-paper-white text-signal-blue border border-warm-mist font-semibold shadow-2xs' : 'text-olive-char hover:bg-pale-stone hover:text-deep-moss' }}">
+					<span class="w-1.5 h-1.5 rounded-full {{ $isActive ? 'bg-signal-blue' : 'bg-warm-mist' }}"></span>
+					<span>{{ $item['label'] }}</span>
+				</a>
+			@endforeach
+		</nav>
 	</div>
 
-	<nav class="space-y-1.5">
-		@foreach($menus as $item)
-			@php
-				$isActive = isset($item['route']) && request()->routeIs($item['route']);
-				$href = isset($item['route']) ? (Route::has($item['route']) ? route($item['route']) : ($item['url'] ?? '#')) : ($item['url'] ?? '#');
-			@endphp
+	<!-- User Card & Logout -->
+	<div class="p-2 border-t border-warm-mist bg-soft-linen">
+		<div class="flex items-center justify-between p-1.5">
+			<div class="flex items-center gap-2 min-w-0">
+				<div class="w-6 h-6 rounded-full bg-deep-moss text-paper-white text-[10px] font-bold flex items-center justify-center flex-shrink-0">
+					{{ strtoupper(substr(auth()->user()?->name ?? 'U', 0, 1)) }}
+				</div>
+				<span class="text-xs font-semibold text-deep-moss truncate">{{ auth()->user()?->name }}</span>
+			</div>
 
-			<a href="{{ $href }}" class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition {{ $isActive ? 'bg-blue-50 font-bold text-blue-700' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}">
-				{{ $item['label'] }}
-			</a>
-		@endforeach
-	</nav>
-
+			<form method="POST" action="{{ route('logout') }}">
+				@csrf
+				<button type="submit" class="text-sage-gray hover:text-rose-600 transition p-1" title="Logout">
+					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+				</button>
+			</form>
+		</div>
+	</div>
 </aside>

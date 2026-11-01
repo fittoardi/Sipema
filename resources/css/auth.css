@@ -1,54 +1,30 @@
 /* ===========================
-AUTH LAYOUT
+AUTH POSTHOG TACTILE STYLES
 =========================== */
 
-.auth-card{
-    @apply bg-white/90 backdrop-blur-xl rounded-3xl border border-white/50 shadow-2xl;
+.auth-card {
+    @apply bg-paper-white rounded-[6px] border border-warm-mist shadow-none;
 }
 
-.auth-input{
-    @apply w-full rounded-xl border border-slate-300 px-4 py-3 transition duration-300;
+.auth-input {
+    @apply w-full rounded-[4px] border border-warm-mist bg-paper-white px-3.5 py-2.5 text-sm text-deep-moss placeholder:text-ash-green transition-colors focus:border-signal-blue focus:outline-none focus:ring-1 focus:ring-signal-blue font-sans;
 }
 
-.auth-input:focus{
-    @apply border-blue-600 ring-4 ring-blue-100 outline-none;
+.auth-button {
+    @apply w-full rounded-[4px] bg-amber-glow py-2.5 px-4 text-sm font-bold text-deep-moss transition-colors hover:bg-dark-amber focus:outline-none focus:ring-2 focus:ring-amber-glow/40 active:translate-y-0.5 shadow-none;
 }
 
-.auth-button{
-    @apply w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-700 py-3 text-white font-semibold transition-all duration-300;
+.fade-up {
+    animation: fadeUp .3s ease-out;
 }
 
-.auth-button:hover{
-    @apply shadow-xl -translate-y-1;
-}
-
-
-/* ===========================
-Animation
-=========================== */
-
-.fade-up{
-
-    animation:fadeUp .7s ease;
-
-}
-
-@keyframes fadeUp{
-
-    from{
-
-        opacity:0;
-
-        transform:translateY(30px);
-
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
     }
-
-    to{
-
-        opacity:1;
-
-        transform:translateY(0);
-
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
-
 }

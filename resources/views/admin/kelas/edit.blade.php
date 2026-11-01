@@ -2,33 +2,28 @@
 
 @section('title', 'Ubah Kelas')
 @section('header', 'Rombel Kelas')
+@section('window_file', 'kelas_edit.sys')
 
 @section('content')
-<div class="space-y-6 max-w-2xl">
+<div class="space-y-4 max-w-xl">
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-xl font-extrabold text-slate-800 tracking-tight">Ubah Rombel Kelas</h1>
-            <p class="text-xs text-slate-500 mt-0.5">Perbarui informasi rombongan belajar, dosen pengampu, atau semester</p>
+            <h1 class="text-base font-bold text-deep-moss">Ubah Rombel Kelas</h1>
+            <p class="text-xs text-olive-char mt-0.5">Perbarui informasi rombongan belajar atau dosen pengampu.</p>
         </div>
-        <a href="{{ route('admin.kelas.index') }}"
-           class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition">
+        <a href="{{ route('admin.kelas.index') }}" class="btn-mist">
             &larr; Kembali
         </a>
     </div>
 
-    <div class="rounded-2xl bg-white p-8 shadow-xs border border-slate-200/80">
-        <form action="{{ route('admin.kelas.update', $kelas) }}" method="POST" class="space-y-6">
+    <div class="bg-paper-white border border-warm-mist rounded-[4px] p-5">
+        <form action="{{ route('admin.kelas.update', $kelas) }}" method="POST" class="space-y-4">
             @csrf
             @method('PUT')
 
             <div>
-                <label for="mata_kuliah_id" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                    Mata Kuliah <span class="text-rose-500">*</span>
-                </label>
-                <select name="mata_kuliah_id"
-                        id="mata_kuliah_id"
-                        required
-                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-2xs">
+                <label for="mata_kuliah_id" class="posthog-label">Mata Kuliah <span class="text-flame-orange">*</span></label>
+                <select name="mata_kuliah_id" id="mata_kuliah_id" required class="posthog-select">
                     <option value="">Pilih Mata Kuliah</option>
                     @foreach($mataKuliahs as $mk)
                         <option value="{{ $mk->id }}" @selected($mk->id == old('mata_kuliah_id', $kelas->mata_kuliah_id))>
@@ -37,18 +32,13 @@
                     @endforeach
                 </select>
                 @error('mata_kuliah_id')
-                    <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
+                    <p class="mt-1 text-xs text-flame-orange">{{ $message }}</p>
                 @enderror
             </div>
 
             <div>
-                <label for="dosen_id" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                    Dosen Pengampu <span class="text-rose-500">*</span>
-                </label>
-                <select name="dosen_id"
-                        id="dosen_id"
-                        required
-                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-2xs">
+                <label for="dosen_id" class="posthog-label">Dosen Pengampu <span class="text-flame-orange">*</span></label>
+                <select name="dosen_id" id="dosen_id" required class="posthog-select">
                     <option value="">Pilih Dosen Pengampu</option>
                     @foreach($dosens as $dosen)
                         <option value="{{ $dosen->id }}" @selected($dosen->id == old('dosen_id', $kelas->dosen_id))>
@@ -57,67 +47,45 @@
                     @endforeach
                 </select>
                 @error('dosen_id')
-                    <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
+                    <p class="mt-1 text-xs text-flame-orange">{{ $message }}</p>
                 @enderror
             </div>
 
             <div>
-                <label for="nama" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                    Nama / Label Kelas <span class="text-rose-500">*</span>
-                </label>
-                <input type="text"
-                       name="nama"
-                       id="nama"
-                       required
-                       value="{{ old('nama', $kelas->nama) }}"
-                       class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-2xs">
+                <label for="nama" class="posthog-label">Nama / Label Kelas <span class="text-flame-orange">*</span></label>
+                <input type="text" name="nama" id="nama" required value="{{ old('nama', $kelas->nama) }}"
+                       class="posthog-input font-mono">
                 @error('nama')
-                    <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
+                    <p class="mt-1 text-xs text-flame-orange">{{ $message }}</p>
                 @enderror
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                    <label for="semester" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                        Semester <span class="text-rose-500">*</span>
-                    </label>
-                    <select name="semester"
-                            id="semester"
-                            required
-                            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-2xs">
+                    <label for="semester" class="posthog-label">Semester <span class="text-flame-orange">*</span></label>
+                    <select name="semester" id="semester" required class="posthog-select">
                         <option value="Ganjil" @selected(old('semester', $kelas->semester) === 'Ganjil')>Ganjil</option>
                         <option value="Genap" @selected(old('semester', $kelas->semester) === 'Genap')>Genap</option>
                     </select>
                     @error('semester')
-                        <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
+                        <p class="mt-1 text-xs text-flame-orange">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="tahun_akademik" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                        Tahun Akademik <span class="text-rose-500">*</span>
-                    </label>
-                    <input type="text"
-                           name="tahun_akademik"
-                           id="tahun_akademik"
-                           required
+                    <label for="tahun_akademik" class="posthog-label">Tahun Akademik <span class="text-flame-orange">*</span></label>
+                    <input type="text" name="tahun_akademik" id="tahun_akademik" required
                            value="{{ old('tahun_akademik', $kelas->tahun_akademik) }}"
-                           class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-2xs font-mono">
+                           class="posthog-input font-mono">
                     @error('tahun_akademik')
-                        <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
+                        <p class="mt-1 text-xs text-flame-orange">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
 
-            <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
-                <a href="{{ route('admin.kelas.index') }}"
-                   class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold hover:bg-slate-50 transition">
-                    Batal
-                </a>
-                <button type="submit"
-                        class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs shadow-blue-500/20 transition">
-                    Perbarui Kelas
-                </button>
+            <div class="pt-3 border-t border-warm-mist flex items-center justify-end gap-2">
+                <a href="{{ route('admin.kelas.index') }}" class="btn-mist">Batal</a>
+                <button type="submit" class="btn-amber">Perbarui Kelas</button>
             </div>
         </form>
     </div>

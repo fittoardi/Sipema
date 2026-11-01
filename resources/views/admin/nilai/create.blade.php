@@ -2,32 +2,27 @@
 
 @section('title', 'Tambah Nilai')
 @section('header', 'Penilaian Akademik')
+@section('window_file', 'nilai_create.sys')
 
 @section('content')
-<div class="space-y-6 max-w-2xl">
+<div class="space-y-4 max-w-xl">
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-xl font-extrabold text-slate-800 tracking-tight">Tambah Penilaian Mahasiswa</h1>
-            <p class="text-xs text-slate-500 mt-0.5">Input nilai evaluasi akademik (Kuis 15%, Tugas 25%, UTS 25%, UAS 35%)</p>
+            <h1 class="text-base font-bold text-deep-moss">Tambah Penilaian Mahasiswa</h1>
+            <p class="text-xs text-olive-char mt-0.5">Input nilai evaluasi (Kuis, Tugas, UTS, UAS). Nilai akhir dihitung otomatis di server.</p>
         </div>
-        <a href="{{ route('admin.nilai.index') }}"
-           class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition">
+        <a href="{{ route('admin.nilai.index') }}" class="btn-mist">
             &larr; Kembali
         </a>
     </div>
 
-    <div class="rounded-2xl bg-white p-8 shadow-xs border border-slate-200/80">
-        <form action="{{ route('admin.nilai.store') }}" method="POST" class="space-y-6">
+    <div class="bg-paper-white border border-warm-mist rounded-[4px] p-5">
+        <form action="{{ route('admin.nilai.store') }}" method="POST" class="space-y-4">
             @csrf
 
             <div>
-                <label for="kelas_id" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                    Kelas Perkuliahan <span class="text-rose-500">*</span>
-                </label>
-                <select name="kelas_id"
-                        id="kelas_id"
-                        required
-                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-2xs">
+                <label for="kelas_id" class="posthog-label">Kelas Perkuliahan <span class="text-flame-orange">*</span></label>
+                <select name="kelas_id" id="kelas_id" required class="posthog-select">
                     <option value="">Pilih Rombel Kelas</option>
                     @foreach($kelas as $k)
                         <option value="{{ $k->id }}" @selected(old('kelas_id') == $k->id)>
@@ -36,18 +31,13 @@
                     @endforeach
                 </select>
                 @error('kelas_id')
-                    <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
+                    <p class="mt-1 text-xs text-flame-orange">{{ $message }}</p>
                 @enderror
             </div>
 
             <div>
-                <label for="mahasiswa_id" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                    Mahasiswa <span class="text-rose-500">*</span>
-                </label>
-                <select name="mahasiswa_id"
-                        id="mahasiswa_id"
-                        required
-                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-2xs">
+                <label for="mahasiswa_id" class="posthog-label">Mahasiswa <span class="text-flame-orange">*</span></label>
+                <select name="mahasiswa_id" id="mahasiswa_id" required class="posthog-select">
                     <option value="">Pilih Mahasiswa</option>
                     @foreach($mahasiswas as $mhs)
                         <option value="{{ $mhs->id }}" @selected(old('mahasiswa_id') == $mhs->id)>
@@ -56,93 +46,55 @@
                     @endforeach
                 </select>
                 @error('mahasiswa_id')
-                    <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
+                    <p class="mt-1 text-xs text-flame-orange">{{ $message }}</p>
                 @enderror
             </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div>
-                    <label for="kuis" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                        Kuis (15%)
-                    </label>
-                    <input type="number"
-                           step="0.01"
-                           min="0"
-                           max="100"
-                           name="kuis"
-                           id="kuis"
-                           value="{{ old('kuis', 0) }}"
-                           class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-2xs font-mono text-center">
+                    <label for="kuis" class="posthog-label">Kuis</label>
+                    <input type="number" step="0.01" min="0" max="100" name="kuis" id="kuis"
+                           value="{{ old('kuis', 0) }}" class="posthog-input font-mono text-center">
                     @error('kuis')
-                        <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
+                        <p class="mt-1 text-xs text-flame-orange">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="tugas" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                        Tugas (25%)
-                    </label>
-                    <input type="number"
-                           step="0.01"
-                           min="0"
-                           max="100"
-                           name="tugas"
-                           id="tugas"
-                           value="{{ old('tugas', 0) }}"
-                           class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-2xs font-mono text-center">
+                    <label for="tugas" class="posthog-label">Tugas</label>
+                    <input type="number" step="0.01" min="0" max="100" name="tugas" id="tugas"
+                           value="{{ old('tugas', 0) }}" class="posthog-input font-mono text-center">
                     @error('tugas')
-                        <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
+                        <p class="mt-1 text-xs text-flame-orange">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="uts" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                        UTS (25%)
-                    </label>
-                    <input type="number"
-                           step="0.01"
-                           min="0"
-                           max="100"
-                           name="uts"
-                           id="uts"
-                           value="{{ old('uts', 0) }}"
-                           class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-2xs font-mono text-center">
+                    <label for="uts" class="posthog-label">UTS</label>
+                    <input type="number" step="0.01" min="0" max="100" name="uts" id="uts"
+                           value="{{ old('uts', 0) }}" class="posthog-input font-mono text-center">
                     @error('uts')
-                        <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
+                        <p class="mt-1 text-xs text-flame-orange">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="uas" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                        UAS (35%)
-                    </label>
-                    <input type="number"
-                           step="0.01"
-                           min="0"
-                           max="100"
-                           name="uas"
-                           id="uas"
-                           value="{{ old('uas', 0) }}"
-                           class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-2xs font-mono text-center">
+                    <label for="uas" class="posthog-label">UAS</label>
+                    <input type="number" step="0.01" min="0" max="100" name="uas" id="uas"
+                           value="{{ old('uas', 0) }}" class="posthog-input font-mono text-center">
                     @error('uas')
-                        <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
+                        <p class="mt-1 text-xs text-flame-orange">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
 
-            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-600">
-                <span class="font-semibold text-slate-800">Kalkulasi Otomatis:</span> Nilai akhir, grade mutu (A/B/C/D/E), dan status kelulusan akan dihitung secara otomatis oleh sistem saat disimpan.
+            <div class="p-3 bg-cream-paper border border-warm-mist rounded-[4px] text-[11px] text-sage-gray">
+                Kalkulasi nilai akhir, grade huruf mutu, dan kelulusan akan dihitung otomatis di server berdasarkan konfigurasi formula yang aktif.
             </div>
 
-            <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
-                <a href="{{ route('admin.nilai.index') }}"
-                   class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold hover:bg-slate-50 transition">
-                    Batal
-                </a>
-                <button type="submit"
-                        class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs shadow-blue-500/20 transition">
-                    Simpan Nilai
-                </button>
+            <div class="pt-3 border-t border-warm-mist flex items-center justify-end gap-2">
+                <a href="{{ route('admin.nilai.index') }}" class="btn-mist">Batal</a>
+                <button type="submit" class="btn-amber">Simpan Nilai</button>
             </div>
         </form>
     </div>

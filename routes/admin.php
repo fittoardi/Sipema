@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\MahasiswaController;
 use App\Http\Controllers\Admin\MataKuliahController;
 use App\Http\Controllers\Admin\NilaiController;
+use App\Http\Controllers\Admin\PengaturanNilaiController;
 use App\Http\Controllers\Admin\ProdiController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,6 +17,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/laporan/export', [LaporanController::class, 'export'])->name('laporan.export');
     Route::get('/laporan/export-excel', [LaporanController::class, 'exportExcel'])->name('laporan.export-excel');
     Route::get('/laporan/export-pdf', [LaporanController::class, 'exportPdf'])->name('laporan.export-pdf');
+
+    Route::get('/pengaturan-nilai', [PengaturanNilaiController::class, 'index'])->name('pengaturan-nilai.index');
+    Route::put('/pengaturan-nilai', [PengaturanNilaiController::class, 'update'])->name('pengaturan-nilai.update');
 
     Route::resource('prodi', ProdiController::class);
     Route::resource('dosen', DosenController::class);

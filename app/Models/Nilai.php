@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\NilaiCalculator;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,6 +24,7 @@ class Nilai extends Model
         'nilai_akhir',
         'grade',
         'status',
+        'updated_by',
     ];
 
     protected function casts(): array
@@ -46,45 +48,30 @@ class Nilai extends Model
         return $this->belongsTo(Mahasiswa::class);
     }
 
+    public function updater(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
     public function isLulus(): bool
     {
-        return $this->status === 'Lulus';
+        return strtolower((string) $this->status) === 'lulus';
     }
 
     public function recalculate(): self
     {
-        /** @var array<string, float> $weights */
-        $weights = config('academic.weights', [
-            'kuis' => 0.1,
-            'tugas' => 0.2,
-            'uts' => 0.3,
-            'uas' => 0.4,
-        ]);
+        $calculator = app(NilaiCalculator::class);
 
-        $finalScore = round(
-            ((float) $this->kuis * ($weights['kuis'] ?? 0.1))
-            + ((float) $this->tugas * ($weights['tugas'] ?? 0.2))
-            + ((float) $this->uts * ($weights['uts'] ?? 0.3))
-            + ((float) $this->uas * ($weights['uas'] ?? 0.4)),
-            2,
+        $result = $calculator->calculate(
+            $this->kuis !== null ? (float) $this->kuis : null,
+            $this->tugas !== null ? (float) $this->tugas : null,
+            $this->uts !== null ? (float) $this->uts : null,
+            $this->uas !== null ? (float) $this->uas : null,
         );
 
-        $grade = 'E';
-        /** @var array<string, array{min: float|int, max: float|int}> $grades */
-        $grades = config('academic.grades', []);
-
-        foreach ($grades as $candidate => $range) {
-            if ($finalScore >= $range['min'] && $finalScore <= $range['max']) {
-                $grade = $candidate;
-                break;
-            }
-        }
-
-        $passingGrade = (float) config('academic.passing_grade', 55);
-
-        $this->nilai_akhir = $finalScore;
-        $this->grade = $grade;
-        $this->status = $finalScore >= $passingGrade ? 'Lulus' : 'Tidak Lulus';
+        $this->nilai_akhir = $result['nilai_akhir'];
+        $this->grade = $result['grade'];
+        $this->status = $result['status'];
 
         return $this;
     }
