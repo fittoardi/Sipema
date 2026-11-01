@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+#[UseEloquentBuilder(Builder::class)]
 class Kelas extends Model
 {
     protected $fillable = [
@@ -35,5 +38,10 @@ class Kelas extends Model
     public function nilais(): HasMany
     {
         return $this->hasMany(Nilai::class);
+    }
+
+    public function jadwals(): HasMany
+    {
+        return $this->hasMany(Jadwal::class);
     }
 }

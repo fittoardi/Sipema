@@ -6,12 +6,12 @@ use App\Actions\Fortify\ResetUserPassword;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Notifications\PasswordResetCodeNotification;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\View\View;
 
 class PasswordResetCodeController extends Controller
 {

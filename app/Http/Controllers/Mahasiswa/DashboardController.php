@@ -2,56 +2,53 @@
 
 namespace App\Http\Controllers\Mahasiswa;
 
+use App\Concerns\StreamsCsv;
 use App\Http\Controllers\Controller;
 use App\Models\Jadwal;
 use App\Models\Mahasiswa;
 use App\Models\MataKuliah;
 use App\Models\Nilai;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DashboardController extends Controller
 {
-    public function index()
+    use StreamsCsv;
+
+    public function index(Request $request): View
     {
-        $user = auth()->user();
+        $user = $request->user();
 
         $mahasiswa = Mahasiswa::with('prodi')
-            ->where('user_id', $user->id)
+            ->where('user_id', $user?->id)
             ->firstOrFail();
 
+        $nilais = Nilai::with('kelas.mataKuliah')
+            ->where('mahasiswa_id', $mahasiswa->id)
+            ->get();
+
+        $jumlahNilai = $nilais->count();
+        $rataNilai = $jumlahNilai > 0 ? (float) $nilais->avg('nilai_akhir') : null;
+
+        $jumlahMataKuliah = MataKuliah::where('prodi_id', $mahasiswa->prodi_id)->count();
+        $jumlahJadwal = Jadwal::count();
+
         return view('dashboard.mahasiswa.index', [
-
             'mahasiswa' => $mahasiswa,
-
-            'jumlahMataKuliah' => MataKuliah::where(
-                'prodi_id',
-                $mahasiswa->prodi_id
-            )->count(),
-
-            'jumlahJadwal' => Jadwal::count(),
-
-            'jumlahNilai' => Nilai::where(
-                'mahasiswa_id',
-                $mahasiswa->id
-            )->count(),
-
-            'rataNilai' => Nilai::where(
-                'mahasiswa_id',
-                $mahasiswa->id
-            )->avg('nilai_akhir'),
-
-            'nilais' => Nilai::with('kelas.mataKuliah')
-                ->where('mahasiswa_id', $mahasiswa->id)
-                ->get(),
-
+            'jumlahMataKuliah' => $jumlahMataKuliah,
+            'jumlahJadwal' => $jumlahJadwal,
+            'jumlahNilai' => $jumlahNilai,
+            'rataNilai' => $rataNilai,
+            'nilais' => $nilais,
         ]);
     }
 
-    public function downloadNilai(): StreamedResponse
+    public function downloadNilai(Request $request): StreamedResponse
     {
-        $user = auth()->user();
+        $user = $request->user();
 
-        $mahasiswa = Mahasiswa::where('user_id', $user->id)->firstOrFail();
+        $mahasiswa = Mahasiswa::where('user_id', $user?->id)->firstOrFail();
 
         $nilais = Nilai::with('kelas.mataKuliah')
             ->where('mahasiswa_id', $mahasiswa->id)
@@ -60,44 +57,25 @@ class DashboardController extends Controller
         $filename = 'nilai_'.$mahasiswa->nim.'.csv';
 
         $headers = [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+            'Mata Kuliah',
+            'Kuis',
+            'Tugas',
+            'UTS',
+            'UAS',
+            'Nilai Akhir',
+            'Grade',
+            'Status',
         ];
 
-        $callback = function () use ($nilais) {
-            $handle = fopen('php://output', 'w');
-
-            // UTF-8 BOM for Excel compatibility
-            fwrite($handle, "\xEF\xBB\xBF");
-
-            // Header row
-            fputcsv($handle, [
-                'Mata Kuliah',
-                'Kuis',
-                'Tugas',
-                'UTS',
-                'UAS',
-                'Nilai Akhir',
-                'Grade',
-                'Status',
-            ]);
-
-            foreach ($nilais as $nilai) {
-                fputcsv($handle, [
-                    $nilai->kelas?->mataKuliah?->nama ?? '-',
-                    $nilai->kuis,
-                    $nilai->tugas,
-                    $nilai->uts,
-                    $nilai->uas,
-                    $nilai->nilai_akhir,
-                    $nilai->grade,
-                    $nilai->status,
-                ]);
-            }
-
-            fclose($handle);
-        };
-
-        return response()->stream($callback, 200, $headers);
+        return $this->streamCsv($filename, $headers, $nilais, fn (Nilai $nilai): array => [
+            $nilai->kelas?->mataKuliah?->nama ?? '-',
+            $nilai->kuis,
+            $nilai->tugas,
+            $nilai->uts,
+            $nilai->uas,
+            $nilai->nilai_akhir,
+            $nilai->grade,
+            $nilai->status,
+        ]);
     }
 }

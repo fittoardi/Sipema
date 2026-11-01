@@ -67,6 +67,54 @@ test('admin can create academic resources', function () {
     ])->assertRedirect(route('admin.nilai.index'));
 
     expect(Nilai::where('mahasiswa_id', $mahasiswa->id)->exists())->toBeTrue();
+
+    // Update and delete Dosen
+    $this->put(route('admin.dosen.update', $dosen), [
+        'user_id' => $dosenUser->id, 'nidn' => '0012345678', 'nip' => '198501012010011001', 'nama' => 'Dosen Updated', 'email' => 'dosen-updated@test.test', 'prodi_id' => $prodi->id,
+    ])->assertRedirect(route('admin.dosen.index'));
+    expect($dosen->refresh()->nama)->toBe('Dosen Updated');
+
+    // Update and delete Mahasiswa
+    $this->put(route('admin.mahasiswa.update', $mahasiswa), [
+        'user_id' => $mahasiswaUser->id, 'nim' => '23110001', 'nama' => 'Mahasiswa Updated', 'prodi_id' => $prodi->id, 'angkatan' => 2024,
+    ])->assertRedirect(route('admin.mahasiswa.index'));
+    expect($mahasiswa->refresh()->nama)->toBe('Mahasiswa Updated');
+
+    // Update and delete Mata Kuliah
+    $this->put(route('admin.matakuliah.update', $mataKuliah), [
+        'prodi_id' => $prodi->id, 'kode' => 'MK01', 'nama' => 'Pemrograman Web Lanjutan', 'sks' => 4,
+    ])->assertRedirect(route('admin.matakuliah.index'));
+    expect($mataKuliah->refresh()->nama)->toBe('Pemrograman Web Lanjutan');
+
+    // Update and delete Kelas
+    $this->put(route('admin.kelas.update', $kelas), [
+        'mata_kuliah_id' => $mataKuliah->id, 'dosen_id' => $dosen->id, 'nama' => 'SI-B',
+        'tahun_akademik' => '2025/2026', 'semester' => 'Genap',
+    ])->assertRedirect(route('admin.kelas.index'));
+    expect($kelas->refresh()->nama)->toBe('SI-B');
+
+    // Update and delete Nilai
+    $nilai = Nilai::where('mahasiswa_id', $mahasiswa->id)->firstOrFail();
+    $this->put(route('admin.nilai.update', $nilai), [
+        'kelas_id' => $kelas->id, 'mahasiswa_id' => $mahasiswa->id,
+        'kuis' => 90, 'tugas' => 90, 'uts' => 90, 'uas' => 90,
+    ])->assertRedirect(route('admin.nilai.index'));
+    expect((float) $nilai->refresh()->nilai_akhir)->toBe(90.0);
+
+    $this->delete(route('admin.nilai.destroy', $nilai))->assertRedirect(route('admin.nilai.index'));
+    expect(Nilai::whereKey($nilai)->exists())->toBeFalse();
+
+    $this->delete(route('admin.kelas.destroy', $kelas))->assertRedirect(route('admin.kelas.index'));
+    expect(Kelas::whereKey($kelas)->exists())->toBeFalse();
+
+    $this->delete(route('admin.matakuliah.destroy', $mataKuliah))->assertRedirect(route('admin.matakuliah.index'));
+    expect(MataKuliah::whereKey($mataKuliah)->exists())->toBeFalse();
+
+    $this->delete(route('admin.mahasiswa.destroy', $mahasiswa))->assertRedirect(route('admin.mahasiswa.index'));
+    expect(Mahasiswa::whereKey($mahasiswa)->exists())->toBeFalse();
+
+    $this->delete(route('admin.dosen.destroy', $dosen))->assertRedirect(route('admin.dosen.index'));
+    expect(Dosen::whereKey($dosen)->exists())->toBeFalse();
 });
 
 test('admin can update and delete prodi', function () {

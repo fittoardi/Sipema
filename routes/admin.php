@@ -21,6 +21,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('dosen', DosenController::class);
     Route::resource('mahasiswa', MahasiswaController::class);
     Route::resource('matakuliah', MataKuliahController::class);
-    Route::resource('kelas', KelasController::class);
+    Route::resource('kelas', KelasController::class)->parameters(['kelas' => 'kelas']);
     Route::resource('nilai', NilaiController::class);
 });

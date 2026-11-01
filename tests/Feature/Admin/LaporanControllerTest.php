@@ -37,3 +37,13 @@ it('allows admin to download laporan excel', function (): void {
         ->assertHeader('content-type', 'application/vnd.ms-excel')
         ->assertHeader('content-disposition', 'attachment; filename=laporan-nilai-'.date('Y-m-d').'.xls');
 });
+
+it('allows admin to download laporan pdf', function (): void {
+    $admin = User::factory()->create(['role' => 'admin']);
+
+    $response = $this->actingAs($admin)->get(route('admin.laporan.export-pdf'));
+
+    $response->assertOk()
+        ->assertHeader('content-type', 'application/pdf')
+        ->assertHeader('content-disposition', 'attachment; filename="laporan-nilai-'.date('Y-m-d').'.pdf"');
+});

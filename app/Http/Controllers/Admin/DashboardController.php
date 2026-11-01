@@ -7,35 +7,39 @@ use App\Models\Dosen;
 use App\Models\Mahasiswa;
 use App\Models\Nilai;
 use App\Models\Prodi;
-use Illuminate\View\View;
+use Illuminate\Contracts\View\View;
 
 class DashboardController extends Controller
 {
     public function index(): View
     {
-        $totalMahasiswa = Mahasiswa::count();
-        $totalDosen = Dosen::count();
-        $prodis = Prodi::withCount('mahasiswas')->get();
+        $totalMahasiswa = Mahasiswa::query()->count();
+        $totalDosen = Dosen::query()->count();
+        $prodis = Prodi::query()->withCount('mahasiswas')->get();
 
-        $lastSemester = Nilai::selectRaw('YEAR(created_at) as tahun, MIN(semester) as semester')
-            ->groupBy('tahun')
-            ->orderByRaw('MIN(created_at) DESC')
+        $lastSemester = Nilai::query()
+            ->join('kelas', 'nilais.kelas_id', '=', 'kelas.id')
+            ->selectRaw('kelas.tahun_akademik as tahun, kelas.semester')
+            ->distinct()
+            ->orderByDesc('kelas.tahun_akademik')
             ->limit(6)
             ->get();
 
-        $distribusiGrade = Nilai::selectRaw(
-            'grade, COUNT(*) as jumlah, ROUND(AVG(nilai_akhir), 2) as rata_rata'
-        )
+        $order = ['A' => 1, 'B' => 2, 'C' => 3, 'D' => 4, 'E' => 5];
+        $distribusiGrade = Nilai::query()
+            ->selectRaw('grade, COUNT(*) as jumlah, ROUND(AVG(nilai_akhir), 2) as rata_rata')
+            ->whereNotNull('grade')
             ->groupBy('grade')
-            ->orderByRaw("FIELD(grade, 'A', 'B', 'C', 'D', 'E', 'F', 'N')")
-            ->get();
+            ->get()
+            ->sortBy(fn ($item): int => $order[$item->grade] ?? 99)
+            ->values();
 
-        $grafikNorm = Nilai::selectRaw(
-            'YEAR(created_at) as tahun, semester, COUNT(*) as jumlah'
-        )
-            ->groupBy('tahun', 'semester')
-            ->orderBy('tahun')
-            ->orderBy('semester')
+        $grafikNorm = Nilai::query()
+            ->join('kelas', 'nilais.kelas_id', '=', 'kelas.id')
+            ->selectRaw('kelas.tahun_akademik as tahun, kelas.semester, COUNT(nilais.id) as jumlah')
+            ->groupBy('kelas.tahun_akademik', 'kelas.semester')
+            ->orderBy('kelas.tahun_akademik')
+            ->orderBy('kelas.semester')
             ->get();
 
         return view('admin.dashboard.index', compact(

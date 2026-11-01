@@ -3,18 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\KelasRequest;
 use App\Models\Dosen;
 use App\Models\Kelas;
 use App\Models\MataKuliah;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
 
 class KelasController extends Controller
 {
     public function index(): View
     {
-        $kelas = Kelas::with(['mataKuliah', 'dosen'])->latest()->get();
+        $kelas = Kelas::query()->with(['mataKuliah', 'dosen'])->latest()->get();
 
         return view('admin.kelas.index', compact('kelas'));
     }
@@ -27,51 +27,32 @@ class KelasController extends Controller
         return view('admin.kelas.create', compact('mataKuliahs', 'dosens'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(KelasRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'mata_kuliah_id' => ['required', 'exists:mata_kuliahs,id'],
-            'dosen_id' => ['required', 'exists:dosens,id'],
-            'nama' => ['required', 'string', 'max:255'],
-            'tahun_akademik' => ['required', 'string', 'max:20'],
-            'semester' => ['required', 'in:Ganjil,Genap'],
-        ]);
+        Kelas::create($request->validated());
 
-        Kelas::create($validated);
-
-        return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil ditambah.');
+        return to_route('admin.kelas.index')->with('success', 'Kelas berhasil ditambah.');
     }
 
-    public function edit(string $id): View
+    public function edit(Kelas $kelas): View
     {
-        $kelas = Kelas::findOrFail($id);
         $mataKuliahs = MataKuliah::all();
         $dosens = Dosen::all();
 
         return view('admin.kelas.edit', compact('kelas', 'mataKuliahs', 'dosens'));
     }
 
-    public function update(Request $request, string $id): RedirectResponse
+    public function update(KelasRequest $request, Kelas $kelas): RedirectResponse
     {
-        $kelas = Kelas::findOrFail($id);
-        $validated = $request->validate([
-            'mata_kuliah_id' => ['required', 'exists:mata_kuliahs,id'],
-            'dosen_id' => ['required', 'exists:dosens,id'],
-            'nama' => ['required', 'string', 'max:255'],
-            'tahun_akademik' => ['required', 'string', 'max:20'],
-            'semester' => ['required', 'in:Ganjil,Genap'],
-        ]);
+        $kelas->update($request->validated());
 
-        $kelas->update($validated);
-
-        return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil diupdate.');
+        return to_route('admin.kelas.index')->with('success', 'Kelas berhasil diupdate.');
     }
 
-    public function destroy(string $id): RedirectResponse
+    public function destroy(Kelas $kelas): RedirectResponse
     {
-        $kelas = Kelas::findOrFail($id);
         $kelas->delete();
 
-        return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil dihapus.');
+        return to_route('admin.kelas.index')->with('success', 'Kelas berhasil dihapus.');
     }
 }

@@ -3,17 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\MahasiswaRequest;
 use App\Models\Mahasiswa;
 use App\Models\Prodi;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
 
 class MahasiswaController extends Controller
 {
     public function index(): View
     {
-        $mahasiswas = Mahasiswa::with('prodi')->latest()->get();
+        $mahasiswas = Mahasiswa::query()->with('prodi')->latest()->get();
 
         return view('admin.mahasiswa.index', compact('mahasiswas'));
     }
@@ -25,48 +25,31 @@ class MahasiswaController extends Controller
         return view('admin.mahasiswa.create', compact('prodis'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(MahasiswaRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'user_id' => ['required', 'exists:users,id'],
-            'nama' => ['required', 'string', 'max:255'],
-            'nim' => ['required', 'string', 'max:20'],
-            'prodi_id' => ['required', 'exists:prodis,id'],
-            'angkatan' => ['required', 'integer'],
-        ]);
-        Mahasiswa::create($validated);
+        Mahasiswa::create($request->validated());
 
-        return redirect()->route('admin.mahasiswa.index')->with('success', 'Mahasiswa berhasil ditambah.');
+        return to_route('admin.mahasiswa.index')->with('success', 'Mahasiswa berhasil ditambah.');
     }
 
-    public function edit(string $id): View
+    public function edit(Mahasiswa $mahasiswa): View
     {
-        $mahasiswa = Mahasiswa::findOrFail($id);
         $prodis = Prodi::all();
 
         return view('admin.mahasiswa.edit', compact('mahasiswa', 'prodis'));
     }
 
-    public function update(Request $request, string $id): RedirectResponse
+    public function update(MahasiswaRequest $request, Mahasiswa $mahasiswa): RedirectResponse
     {
-        $mahasiswa = Mahasiswa::findOrFail($id);
-        $validated = $request->validate([
-            'user_id' => ['required', 'exists:users,id'],
-            'nama' => ['required', 'string', 'max:255'],
-            'nim' => ['required', 'string', 'max:20'],
-            'prodi_id' => ['required', 'exists:prodis,id'],
-            'angkatan' => ['required', 'integer'],
-        ]);
-        $mahasiswa->update($validated);
+        $mahasiswa->update($request->validated());
 
-        return redirect()->route('admin.mahasiswa.index')->with('success', 'Mahasiswa berhasil diupdate.');
+        return to_route('admin.mahasiswa.index')->with('success', 'Mahasiswa berhasil diupdate.');
     }
 
-    public function destroy(string $id): RedirectResponse
+    public function destroy(Mahasiswa $mahasiswa): RedirectResponse
     {
-        $mahasiswa = Mahasiswa::findOrFail($id);
         $mahasiswa->delete();
 
-        return redirect()->route('admin.mahasiswa.index')->with('success', 'Mahasiswa berhasil dihapus.');
+        return to_route('admin.mahasiswa.index')->with('success', 'Mahasiswa berhasil dihapus.');
     }
 }
