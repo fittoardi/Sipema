@@ -3,6 +3,7 @@
 use App\Http\Controllers\Mahasiswa\DashboardController;
 use App\Http\Controllers\Mahasiswa\KrsController;
 use App\Http\Controllers\Mahasiswa\PresensiSayaController;
+use App\Http\Controllers\Mahasiswa\TugasController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'role:mahasiswa'])
@@ -26,5 +27,11 @@ Route::middleware(['auth', 'role:mahasiswa'])
         // Presensi Kamera Live & GPS Geofencing
         Route::get('/pertemuan/{pertemuan}/presensi', [PresensiSayaController::class, 'show'])->name('presensi.show');
         Route::post('/pertemuan/{pertemuan}/presensi', [PresensiSayaController::class, 'store'])->name('presensi.store');
+
+        // Tugas & E-Learning
+        Route::get('/tugas/{tugas}', [TugasController::class, 'show'])->name('tugas.show');
+        Route::post('/tugas/{tugas}/submit', [TugasController::class, 'submit'])->name('tugas.submit');
+        Route::get('/tugas/{tugas}/download-lampiran', [TugasController::class, 'downloadLampiran'])->name('tugas.download-lampiran');
+        Route::get('/tugas/{tugas}/download-jawaban', [TugasController::class, 'downloadJawaban'])->name('tugas.download-jawaban');
 
     });

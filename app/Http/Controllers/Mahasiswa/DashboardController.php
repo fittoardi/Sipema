@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Mahasiswa;
 
 use App\Concerns\StreamsCsv;
 use App\Http\Controllers\Controller;
-use App\Models\Jadwal;
+use App\Models\Kelas;
 use App\Models\Mahasiswa;
 use App\Models\MataKuliah;
 use App\Models\Nilai;

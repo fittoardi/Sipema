@@ -5,6 +5,7 @@ use App\Http\Controllers\Dosen\NilaiController;
 use App\Http\Controllers\Dosen\PertemuanController;
 use App\Http\Controllers\Dosen\PerwalianKrsController;
 use App\Http\Controllers\Dosen\PresensiController;
+use App\Http\Controllers\Dosen\TugasController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'role:dosen'])
@@ -36,6 +37,12 @@ Route::middleware(['auth', 'role:dosen'])
         Route::post('/kelas/{kela}/pertemuan/{pertemuan}/materi', [PertemuanController::class, 'storeMateri'])->name('pertemuan.materi.store');
         Route::delete('/kelas/{kela}/pertemuan/{pertemuan}/materi/{materi}', [PertemuanController::class, 'destroyMateri'])->name('pertemuan.materi.destroy');
         Route::post('/kelas/{kela}/pertemuan/{pertemuan}/tugas', [PertemuanController::class, 'storeTugas'])->name('pertemuan.tugas.store');
+
+        // Tugas & Penilaian Submission
+        Route::get('/kelas/{kela}/pertemuan/{pertemuan}/tugas/{tugas}', [TugasController::class, 'show'])->name('tugas.show');
+        Route::post('/kelas/{kela}/pertemuan/{pertemuan}/tugas/{tugas}/nilai/{pengumpulan}', [TugasController::class, 'grade'])->name('tugas.grade');
+        Route::get('/kelas/{kela}/pertemuan/{pertemuan}/tugas/{tugas}/download/{pengumpulan}', [TugasController::class, 'downloadSubmission'])->name('tugas.download-submission');
+        Route::post('/kelas/{kela}/sinkron-tugas', [TugasController::class, 'syncAll'])->name('tugas.sync-all');
 
         // Presensi & Galeri Verifikasi Selfie
         Route::get('/kelas/{kela}/pertemuan/{pertemuan}/presensi', [PresensiController::class, 'index'])->name('presensi.index');
