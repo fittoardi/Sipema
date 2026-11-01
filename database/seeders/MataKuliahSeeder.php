@@ -36,7 +36,7 @@ class MataKuliahSeeder extends Seeder
         }
 
         $prodis = Prodi::all();
-        $remaining = 20 - MataKuliah::count();
+        $remaining = 30 - MataKuliah::count();
 
         if ($remaining > 0) {
             MataKuliah::factory()->count($remaining)->create([

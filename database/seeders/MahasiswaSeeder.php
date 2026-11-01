@@ -39,7 +39,7 @@ class MahasiswaSeeder extends Seeder
 
             $prodis = Prodi::all();
             $dosens = Dosen::all();
-            $remaining = 25 - Mahasiswa::count();
+            $remaining = 30 - Mahasiswa::count();
 
             if ($remaining > 0 && $prodis->isNotEmpty()) {
                 Mahasiswa::factory()->count($remaining)->create([

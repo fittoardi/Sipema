@@ -25,8 +25,8 @@ class ProdiSeeder extends Seeder
         }
 
         $currentCount = Prodi::count();
-        if ($currentCount < 10) {
-            Prodi::factory()->count(10 - $currentCount)->create();
+        if ($currentCount < 30) {
+            Prodi::factory()->count(30 - $currentCount)->create();
         }
     }
 }

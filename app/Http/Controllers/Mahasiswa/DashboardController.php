@@ -24,15 +24,15 @@ class DashboardController extends Controller
             ->where('user_id', $user?->id)
             ->firstOrFail();
 
-        $nilais = Nilai::with('kelas.mataKuliah')
-            ->where('mahasiswa_id', $mahasiswa->id)
+        $nilais = Nilai::with(['kelasMahasiswa.kelas.mataKuliah'])
+            ->whereHas('kelasMahasiswa', fn ($q) => $q->where('mahasiswa_id', $mahasiswa->id))
             ->get();
 
         $jumlahNilai = $nilais->count();
         $rataNilai = $jumlahNilai > 0 ? (float) $nilais->avg('nilai_akhir') : null;
 
-        $jumlahMataKuliah = MataKuliah::where('prodi_id', $mahasiswa->prodi_id)->count();
-        $jumlahJadwal = Jadwal::count();
+        $jumlahMataKuliah = MataKuliah::where('program_studi_id', $mahasiswa->program_studi_id)->count();
+        $jumlahJadwal = Kelas::count();
 
         return view('dashboard.mahasiswa.index', [
             'mahasiswa' => $mahasiswa,
@@ -50,8 +50,8 @@ class DashboardController extends Controller
 
         $mahasiswa = Mahasiswa::where('user_id', $user?->id)->firstOrFail();
 
-        $nilais = Nilai::with('kelas.mataKuliah')
-            ->where('mahasiswa_id', $mahasiswa->id)
+        $nilais = Nilai::with(['kelasMahasiswa.kelas.mataKuliah'])
+            ->whereHas('kelasMahasiswa', fn ($q) => $q->where('mahasiswa_id', $mahasiswa->id))
             ->get();
 
         $filename = 'nilai_'.$mahasiswa->nim.'.csv';
@@ -69,13 +69,13 @@ class DashboardController extends Controller
 
         return $this->streamCsv($filename, $headers, $nilais, fn (Nilai $nilai): array => [
             $nilai->kelas?->mataKuliah?->nama ?? '-',
-            $nilai->kuis,
-            $nilai->tugas,
-            $nilai->uts,
-            $nilai->uas,
-            $nilai->nilai_akhir,
+            number_format((float) $nilai->kuis, 2, '.', ''),
+            number_format((float) $nilai->tugas, 2, '.', ''),
+            number_format((float) $nilai->uts, 2, '.', ''),
+            number_format((float) $nilai->uas, 2, '.', ''),
+            number_format((float) $nilai->nilai_akhir, 2, '.', ''),
             $nilai->grade,
-            $nilai->status,
+            $nilai->status instanceof \App\Enums\StatusNilai ? $nilai->status->label() : (string) ($nilai->status ?? '-'),
         ]);
     }
 }

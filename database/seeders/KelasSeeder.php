@@ -130,5 +130,31 @@ class KelasSeeder extends Seeder
                 ]);
             }
         }
+
+        $remainingKelas = 30 - Kelas::count();
+        if ($remainingKelas > 0 && $courses->isNotEmpty() && $dosens->isNotEmpty()) {
+            for ($i = 0; $i < $remainingKelas; $i++) {
+                $c = Kelas::create([
+                    'mata_kuliah_id' => $courses->random()->id,
+                    'dosen_id' => $dosens->random()->id,
+                    'tahun_akademik_id' => $tahunAktif->id,
+                    'ruangan_id' => $rooms->isNotEmpty() ? $rooms->random()->id : null,
+                    'nama_kelas' => 'KLS-'.fake()->unique()->numberBetween(100, 999),
+                    'tipe_kelas' => fake()->randomElement(TipeKelas::cases())->value,
+                    'hari' => fake()->randomElement(Hari::cases())->value,
+                    'jam_mulai' => '08:00:00',
+                    'jam_selesai' => '10:30:00',
+                    'kapasitas' => 40,
+                ]);
+
+                if ($allStudents->isNotEmpty()) {
+                    $randomStudent = $allStudents->random();
+                    KelasMahasiswa::firstOrCreate([
+                        'kelas_id' => $c->id,
+                        'mahasiswa_id' => $randomStudent->id,
+                    ]);
+                }
+            }
+        }
     }
 }

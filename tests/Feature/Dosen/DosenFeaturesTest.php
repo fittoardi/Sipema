@@ -13,6 +13,11 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    $this->seed([
+        \Database\Seeders\PengaturanNilaiSeeder::class,
+        \Database\Seeders\SkalaGradeSeeder::class,
+    ]);
+
     $this->prodi = Prodi::create([
         'kode_prodi' => 'TI',
         'nama_prodi' => 'Teknik Informatika',
@@ -40,9 +45,16 @@ beforeEach(function () {
         'prodi_id' => $this->prodi->id,
     ]);
 
+    $this->ruangan = \App\Models\Ruangan::create([
+        'kode' => 'LAB1',
+        'nama' => 'Lab Komputer 1',
+        'kapasitas' => 40,
+    ]);
+
     $this->kelas = Kelas::create([
         'mata_kuliah_id' => $this->mataKuliah->id,
         'dosen_id' => $this->dosen->id,
+        'ruangan_id' => $this->ruangan->id,
         'nama' => 'TI-3A',
         'tahun_akademik' => '2024/2025',
         'semester' => 'Ganjil',
@@ -64,13 +76,10 @@ beforeEach(function () {
 
     $this->kelas->mahasiswas()->attach($this->student);
 
-    $this->jadwal = Jadwal::create([
-        'mata_kuliah_id' => $this->mataKuliah->id,
-        'kelas_id' => $this->kelas->id,
+    $this->kelas->update([
         'hari' => 'Senin',
         'jam_mulai' => '08:00:00',
         'jam_selesai' => '10:30:00',
-        'ruangan' => 'Lab Komputer 1',
     ]);
 });
 
@@ -139,13 +148,12 @@ test('dosen can store grade and recalculate score for student', function () {
     $response->assertRedirect();
     $response->assertSessionHas('status');
 
-    $nilai = Nilai::where('kelas_id', $this->kelas->id)
-        ->where('mahasiswa_id', $this->student->id)
+    $nilai = Nilai::whereHas('kelasMahasiswa', fn ($q) => $q->where('kelas_id', $this->kelas->id)->where('mahasiswa_id', $this->student->id))
         ->firstOrFail();
 
     expect((float) $nilai->nilai_akhir)->toBe(87.5)
         ->and($nilai->grade)->toBe('A')
-        ->and($nilai->status)->toBe('Lulus');
+        ->and($nilai->status->label())->toBe('Lulus');
 });
 
 test('guest cannot access dosen features', function () {

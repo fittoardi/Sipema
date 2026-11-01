@@ -36,7 +36,7 @@ class DosenSeeder extends Seeder
             );
 
             $prodis = Prodi::all();
-            $remaining = 15 - Dosen::count();
+            $remaining = 30 - Dosen::count();
 
             if ($remaining > 0 && $prodis->isNotEmpty()) {
                 Dosen::factory()->count($remaining)->create([

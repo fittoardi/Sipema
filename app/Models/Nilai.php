@@ -33,6 +33,22 @@ class Nilai extends Model
         'updated_by',
     ];
 
+    public function setStatusAttribute($value): void
+    {
+        if (is_string($value)) {
+            $lower = strtolower($value);
+            if ($lower === 'lulus') {
+                $value = StatusNilai::Lulus;
+            } elseif ($lower === 'tidak lulus' || $lower === 'tidak_lulus') {
+                $value = StatusNilai::TidakLulus;
+            } elseif ($lower === 'belum lengkap' || $lower === 'belum_lengkap') {
+                $value = StatusNilai::BelumLengkap;
+            }
+        }
+
+        $this->attributes['status'] = $value instanceof StatusNilai ? $value->value : $value;
+    }
+
     public function setKelasIdAttribute($value): void
     {
         $this->tempKelasId = $value;

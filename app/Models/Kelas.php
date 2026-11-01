@@ -153,6 +153,11 @@ class Kelas extends Model
         return $this->kelasMahasiswa();
     }
 
+    public function nilais(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    {
+        return $this->hasManyThrough(Nilai::class, KelasMahasiswa::class, 'kelas_id', 'kelas_mahasiswa_id');
+    }
+
     public function mahasiswas(): BelongsToMany
     {
         return $this->belongsToMany(Mahasiswa::class, 'kelas_mahasiswa', 'kelas_id', 'mahasiswa_id')

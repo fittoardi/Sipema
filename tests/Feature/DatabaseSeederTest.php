@@ -1,12 +1,13 @@
 <?php
 
 use App\Models\Dosen;
-use App\Models\Jadwal;
 use App\Models\Kelas;
 use App\Models\Mahasiswa;
 use App\Models\MataKuliah;
 use App\Models\Nilai;
+use App\Models\Pertemuan;
 use App\Models\Prodi;
+use App\Models\Ruangan;
 use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,7 +22,8 @@ test('database seeder populates at least 30 records for each core academic table
         ->and(Mahasiswa::count())->toBeGreaterThanOrEqual(30)
         ->and(MataKuliah::count())->toBeGreaterThanOrEqual(30)
         ->and(Kelas::count())->toBeGreaterThanOrEqual(30)
-        ->and(Jadwal::count())->toBeGreaterThanOrEqual(30)
+        ->and(Pertemuan::count())->toBeGreaterThanOrEqual(30)
+        ->and(Ruangan::count())->toBeGreaterThanOrEqual(5)
         ->and(Nilai::count())->toBeGreaterThanOrEqual(30);
 
     // Verify demo accounts still exist
