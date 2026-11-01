@@ -38,7 +38,7 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended(route('mahasiswa.dashboard', absolute: false));
         }
 
-        return redirect()->intended(route('filament.admin.pages.dashboard', absolute: false));
+        return redirect()->intended(route('admin.dashboard', absolute: false));
     }
 
     /**

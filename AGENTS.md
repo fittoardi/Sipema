@@ -28,9 +28,13 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - tailwindcss (TAILWINDCSS) - v3
 - alpinejs (ALPINEJS) - v3
 
-## Skills Activation
+## Skills Activation (MANDATORY)
 
-This project has domain-specific skills available in `**/skills/**`. You MUST activate the relevant skill whenever you work in that domain—don't wait until you're stuck.
+- BEFORE answering ANY prompt, question, or task — including trivial ones — you MUST first check available skills (`skills_list`) and load the relevant one(s) with `skill_view`. No answer may be given without skill context when a matching skill exists.
+- For every domain touched (Laravel, Filament, Livewire, testing, security, UI, etc.) activate the corresponding skill FIRST; do not rely on memory or guess.
+- If no skill matches, state that explicitly before answering. Never answer "ngawur" (rambling/ungrounded); ground every claim in a loaded skill or verified repo context.
+- Re-load a skill if its content was pruned (`[SKILL_PRUNED]`) before acting on it.
+- Skills override general knowledge: follow the skill's procedure, pitfalls, and conventions over your own defaults.
 
 ## Conventions
 

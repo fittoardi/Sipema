@@ -1,6 +1,6 @@
 # Implementation Plan — Sistem Pengelolaan Nilai Mahasiswa (SIPENMA) dengan Laravel
 
-> Seluruh sistem dibangun sebagai **satu aplikasi Laravel monolith** (autentikasi, area per role, master data, nilai, dashboard, dan laporan dalam satu codebase). Ganti `[NAMA_KAMPUS]` dengan nama institusi kamu. Dokumen pendamping: `sipenma-prompt.md`.
+> Seluruh sistem dibangun sebagai **satu aplikasi Laravel monolith** (autentikasi, area per role, master data, nilai, dashboard, dan laporan dalam satu codebase). Ganti `[NAMA_KAMPUS]` dengan nama institusi kamu. Dokumen pendamping: `02-prompt.md`.
 
 ---
 

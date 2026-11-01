@@ -24,7 +24,7 @@ php artisan migrate:fresh --seed
 
 | Peran (Role) | Nama Pengguna | Identifier Login (Pilih Salah Satu) | Password | URL Dashboard |
 | :--- | :--- | :--- | :--- | :--- |
-| **Admin** | Super Admin | `admin@sipenma.test` | `password` | `/admin` / `/admin/dashboard` |
+| **Admin** | Super Admin | `admin@sipenma.test` | `password` | `/admin/dashboard` |
 | **Dosen** | Dr. Budi Santoso | `budi@sipenma.test`<br>NIDN: `0012345678`<br>NIP: `198501012010011001` | `password` | `/dosen/dashboard` |
 | **Mahasiswa** | Andi Pratama | `andi@sipenma.test`<br>NIM: `23110001` | `password` | `/mahasiswa/dashboard` |
 
@@ -38,8 +38,7 @@ php artisan migrate:fresh --seed
 - **Peran**: `admin`
 - **Akses Halaman**:
   - Halaman Login: [`/login`](file:///d:/Laravel/Sipema/resources/views/auth/login.blade.php)
-  - Filament Admin Panel: `/admin`
-  - Custom Admin Dashboard: `/admin/dashboard`
+  - Admin Dashboard: `/admin/dashboard` (atau `/admin`)
 - **Fitur Utama**:
   - Manajemen Program Studi (Prodi)
   - Manajemen Data Dosen
