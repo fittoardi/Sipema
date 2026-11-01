@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Auth;
 
 use App\Models\Mahasiswa;
@@ -23,7 +25,7 @@ class LoginTest extends TestCase
     public function user_can_login_with_valid_credentials()
     {
         $user = User::factory()->create([
-            'password' => bcrypt('password123')
+            'password' => bcrypt('password123'),
         ]);
 
         $response = $this->post('/login', [
@@ -81,7 +83,7 @@ class LoginTest extends TestCase
     public function user_cannot_login_with_wrong_password()
     {
         $user = User::factory()->create([
-            'password' => bcrypt('password123')
+            'password' => bcrypt('password123'),
         ]);
 
         $response = $this->from('/login')->post('/login', [
@@ -141,7 +143,7 @@ class LoginTest extends TestCase
     public function remember_me_login()
     {
         $user = User::factory()->create([
-            'password' => bcrypt('password123')
+            'password' => bcrypt('password123'),
         ]);
 
         $response = $this->post('/login', [
