@@ -13,6 +13,10 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             DosenSeeder::class,
             MahasiswaSeeder::class,
+            MataKuliahSeeder::class,
+            KelasSeeder::class,
+            JadwalSeeder::class,
+            NilaiSeeder::class,
         ]);
     }
 }

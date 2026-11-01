@@ -17,14 +17,23 @@ class NilaiController extends Controller
     {
         $user = $request->user();
         $dosen = Dosen::where('user_id', $user?->id)->firstOrFail();
-        $kelas = Kelas::query()
+
+        $selectedKelas = $request->integer('kelas_id');
+
+        $allKelas = Kelas::query()
             ->where('dosen_id', $dosen->id)
-            ->with(['mataKuliah', 'mahasiswas', 'nilais'])
+            ->with(['mataKuliah', 'mahasiswas.user', 'nilais'])
             ->get();
 
-        return view('dosen.nilai.index', [
+        $kelas = $selectedKelas > 0
+            ? $allKelas->where('id', $selectedKelas)
+            : $allKelas;
+
+        return view('dashboard.dosen.nilai', [
+            'dosen' => $dosen,
+            'allKelas' => $allKelas,
             'kelas' => $kelas,
-            'selectedKelas' => $request->integer('kelas_id'),
+            'selectedKelas' => $selectedKelas,
         ]);
     }
 
@@ -46,6 +55,6 @@ class NilaiController extends Controller
         ]);
         $nilai->fill($validated)->recalculate()->save();
 
-        return back()->with('status', 'Nilai berhasil disimpan dan dihitung.');
+        return back()->with('status', 'Nilai berhasil disimpan dan dihitung otomatis.');
     }
 }

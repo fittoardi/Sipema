@@ -11,9 +11,12 @@ Route::middleware(['auth', 'role:dosen'])
 
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-        Route::get('dashboard/nilai', [NilaiController::class, 'index'])->name('nilai.index');
-        Route::post('dashboard/nilai', [NilaiController::class, 'store'])->name('nilai.store');
+        Route::get('/matakuliah', [DashboardController::class, 'mataKuliah'])->name('courses');
+        Route::get('/jadwal', [DashboardController::class, 'jadwal'])->name('schedule');
 
-        Route::get('dashboard/download-nilai', [DashboardController::class, 'downloadNilai'])->name('dashboard.download-nilai');
+        Route::get('/dashboard/nilai', [NilaiController::class, 'index'])->name('nilai.index');
+        Route::post('/dashboard/nilai', [NilaiController::class, 'store'])->name('nilai.store');
+
+        Route::get('/dashboard/download-nilai', [DashboardController::class, 'downloadNilai'])->name('dashboard.download-nilai');
 
     });
