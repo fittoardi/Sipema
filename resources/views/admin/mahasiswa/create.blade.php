@@ -1,47 +1,128 @@
 @extends('layouts.admin')
 
 @section('title', 'Tambah Mahasiswa')
+@section('header', 'Data Mahasiswa')
 
 @section('content')
-<div class="flex justify-between items-center mb-4">
-    <h1>Tambah Mahasiswa</h1>
-    <a href="{{ route('admin.mahasiswa.index') }}" class="btn btn-outline">Kembali</a>
-</div>
-
-@if ($errors->any())
-    <div class="mb-4 alert alert-danger">
-        <ul class="list-disc list-inside">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
+<div class="space-y-6 max-w-2xl">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-xl font-extrabold text-slate-800 tracking-tight">Tambah Mahasiswa Baru</h1>
+            <p class="text-xs text-slate-500 mt-0.5">Daftarkan mahasiswa baru dan hubungkan dengan akun pengguna</p>
+        </div>
+        <a href="{{ route('admin.mahasiswa.index') }}"
+           class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition">
+            &larr; Kembali
+        </a>
     </div>
-@endif
 
-<div class="card">
-    <form action="{{ route('admin.mahasiswa.store') }}" method="POST" class="p-4 space-y-4">
-        @csrf
-        <div>
-            <label class="block text-sm font-medium mb-1">NIM</label>
-            <input type="text" name="nim" required value="{{ old('nim') }}" class="w-full border border-gray-300 p-2 rounded">
-        </div>
-        <div>
-            <label class="block text-sm font-medium mb-1">Nama</label>
-            <input type="text" name="nama" required value="{{ old('nama') }}" class="w-full border border-gray-300 p-2 rounded">
-        </div>
-        <div>
-            <label class="block text-sm font-medium mb-1">Email</label>
-            <input type="email" name="email" required value="{{ old('email') }}" class="w-full border border-gray-300 p-2 rounded">
-        </div>
-        <div>
-            <label class="block text-sm font-medium mb-1">Prodi</label>
-            <select name="prodi_id" class="w-full border border-gray-300 p-2 rounded" required>
-                @foreach($prodis as $prodi)
-                    <option value="{{ $prodi->id }}">{{ $prodi->nama_prodi }}</option>
-                @endforeach
-            </select>
-        </div>
-        <button type="submit" class="btn btn-primary">Simpan</button>
-    </form>
+    <div class="rounded-2xl bg-white p-8 shadow-xs border border-slate-200/80">
+        <form action="{{ route('admin.mahasiswa.store') }}" method="POST" class="space-y-6">
+            @csrf
+
+            <div>
+                <label for="user_id" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                    Akun Pengguna (User Akun Mahasiswa) <span class="text-rose-500">*</span>
+                </label>
+                <select name="user_id"
+                        id="user_id"
+                        required
+                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-2xs">
+                    <option value="">Pilih Akun Pengguna</option>
+                    @foreach($users as $user)
+                        <option value="{{ $user->id }}" @selected(old('user_id') == $user->id)>
+                            {{ $user->name }} ({{ $user->email }})
+                        </option>
+                    @endforeach
+                </select>
+                @error('user_id')
+                    <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="nim" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                        NIM <span class="text-rose-500">*</span>
+                    </label>
+                    <input type="text"
+                           name="nim"
+                           id="nim"
+                           required
+                           value="{{ old('nim') }}"
+                           placeholder="Contoh: 23110001"
+                           class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-2xs font-mono">
+                    @error('nim')
+                        <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="angkatan" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                        Tahun Angkatan <span class="text-rose-500">*</span>
+                    </label>
+                    <input type="number"
+                           name="angkatan"
+                           id="angkatan"
+                           required
+                           min="2000"
+                           max="2099"
+                           value="{{ old('angkatan', date('Y')) }}"
+                           placeholder="{{ date('Y') }}"
+                           class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-2xs font-mono">
+                    @error('angkatan')
+                        <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+            <div>
+                <label for="nama" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                    Nama Lengkap Mahasiswa <span class="text-rose-500">*</span>
+                </label>
+                <input type="text"
+                       name="nama"
+                       id="nama"
+                       required
+                       value="{{ old('nama') }}"
+                       placeholder="Contoh: Rian Anggoro"
+                       class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-2xs">
+                @error('nama')
+                    <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div>
+                <label for="prodi_id" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                    Program Studi <span class="text-rose-500">*</span>
+                </label>
+                <select name="prodi_id"
+                        id="prodi_id"
+                        required
+                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-2xs">
+                    <option value="">Pilih Program Studi</option>
+                    @foreach($prodis as $prodi)
+                        <option value="{{ $prodi->id }}" @selected(old('prodi_id') == $prodi->id)>
+                            {{ $prodi->nama_prodi }} ({{ $prodi->kode_prodi }})
+                        </option>
+                    @endforeach
+                </select>
+                @error('prodi_id')
+                    <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+                <a href="{{ route('admin.mahasiswa.index') }}"
+                   class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold hover:bg-slate-50 transition">
+                    Batal
+                </a>
+                <button type="submit"
+                        class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs shadow-blue-500/20 transition">
+                    Simpan Mahasiswa
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 @endsection

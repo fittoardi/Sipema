@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\DosenRequest;
 use App\Models\Dosen;
 use App\Models\Prodi;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 
@@ -21,8 +22,9 @@ class DosenController extends Controller
     public function create(): View
     {
         $prodis = Prodi::all();
+        $users = User::query()->where('role', 'dosen')->get();
 
-        return view('admin.dosen.create', compact('prodis'));
+        return view('admin.dosen.create', compact('prodis', 'users'));
     }
 
     public function store(DosenRequest $request): RedirectResponse
@@ -35,8 +37,9 @@ class DosenController extends Controller
     public function edit(Dosen $dosen): View
     {
         $prodis = Prodi::all();
+        $users = User::query()->where('role', 'dosen')->get();
 
-        return view('admin.dosen.edit', compact('dosen', 'prodis'));
+        return view('admin.dosen.edit', compact('dosen', 'prodis', 'users'));
     }
 
     public function update(DosenRequest $request, Dosen $dosen): RedirectResponse

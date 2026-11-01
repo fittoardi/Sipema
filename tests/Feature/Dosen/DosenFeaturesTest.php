@@ -161,4 +161,3 @@ test('student cannot access dosen features', function () {
     $this->actingAs($this->studentUser)->get(route('dosen.schedule'))->assertForbidden();
     $this->actingAs($this->studentUser)->get(route('dosen.nilai.index'))->assertForbidden();
 });
-

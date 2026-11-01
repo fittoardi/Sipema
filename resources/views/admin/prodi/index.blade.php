@@ -1,46 +1,79 @@
 @extends('layouts.admin')
 
 @section('title', 'Program Studi')
+@section('header', 'Program Studi')
 
 @section('content')
-<div class="flex justify-between items-center mb-4">
-    <h1>Program Studi</h1>
-    <a href="{{ route('admin.prodi.create') }}" class="btn btn-primary">+ Tambah</a>
-</div>
+<div class="space-y-6">
+    {{-- Header Action --}}
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-xl font-extrabold text-slate-800 tracking-tight">Master Data Program Studi</h1>
+            <p class="text-xs text-slate-500 mt-0.5">Kelola data fakultas dan jurusan akademik yang tersedia di sistem</p>
+        </div>
+        <a href="{{ route('admin.prodi.create') }}"
+           class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs shadow-blue-500/20 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Tambah Program Studi
+        </a>
+    </div>
 
-@if (session('success'))
-    <div class="mb-4 alert alert-success">{{ session('success') }}</div>
-@endif
+    {{-- Table Card --}}
+    <div class="rounded-2xl bg-white shadow-xs border border-slate-200/80 overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total {{ $prodis->count() }} Program Studi</span>
+        </div>
 
-<div class="card">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Kode</th>
-                <th>Nama</th>
-                <th class="text-right">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($prodis as $prodi)
-                <tr>
-                    <td>{{ $prodi->kode_prodi }}</td>
-                    <td>{{ $prodi->nama_prodi }}</td>
-                    <td class="text-right space-x-2">
-                        <a href="{{ route('admin.prodi.edit', $prodi) }}" class="btn btn-sm btn-outline">Edit</a>
-                        <form action="{{ route('admin.prodi.destroy', $prodi) }}" method="POST" class="inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Hapus?')">Hapus</button>
-                        </form>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="3" class="text-muted">Tidak ada data.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-slate-50 text-slate-600 border-b border-slate-200/80 text-xs font-semibold uppercase tracking-wider">
+                    <tr>
+                        <th class="px-6 py-3.5">Kode Prodi</th>
+                        <th class="px-6 py-3.5">Nama Program Studi</th>
+                        <th class="px-6 py-3.5 text-right">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    @forelse($prodis as $prodi)
+                        <tr class="hover:bg-slate-50/75 transition-colors">
+                            <td class="px-6 py-4">
+                                <span class="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 border border-blue-200">
+                                    {{ $prodi->kode_prodi }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="font-semibold text-slate-900">{{ $prodi->nama_prodi }}</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <div class="inline-flex items-center gap-2">
+                                    <a href="{{ route('admin.prodi.edit', $prodi) }}"
+                                       class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold transition">
+                                        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                        Edit
+                                    </a>
+                                    <form action="{{ route('admin.prodi.destroy', $prodi) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus prodi ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-semibold transition">
+                                            <svg class="w-3.5 h-3.5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                            Hapus
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3" class="px-6 py-12 text-center text-slate-400">
+                                <p class="text-sm font-medium text-slate-600">Belum ada program studi.</p>
+                                <p class="text-xs text-slate-400 mt-0.5">Klik tombol Tambah Program Studi untuk menambahkan data baru.</p>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 @endsection

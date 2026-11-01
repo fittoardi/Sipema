@@ -1,59 +1,150 @@
 @extends('layouts.admin')
 
 @section('title', 'Tambah Nilai')
+@section('header', 'Penilaian Akademik')
 
 @section('content')
-<div class="flex justify-between items-center mb-4">
-    <h1>Tambah Nilai</h1>
-    <a href="{{ route('admin.nilai.index') }}" class="btn btn-outline">Kembali</a>
-</div>
-
-@if ($errors->any())
-    <div class="mb-4 alert alert-danger">
-        <ul class="list-disc list-inside">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
+<div class="space-y-6 max-w-2xl">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-xl font-extrabold text-slate-800 tracking-tight">Tambah Penilaian Mahasiswa</h1>
+            <p class="text-xs text-slate-500 mt-0.5">Input nilai evaluasi akademik (Kuis 15%, Tugas 25%, UTS 25%, UAS 35%)</p>
+        </div>
+        <a href="{{ route('admin.nilai.index') }}"
+           class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition">
+            &larr; Kembali
+        </a>
     </div>
-@endif
 
-<div class="card">
-    <form action="{{ route('admin.nilai.store') }}" method="POST" class="p-4 space-y-4">
-        @csrf
-        <div>
-            <label class="block text-sm font-medium mb-1">Kelas</label>
-            <select name="kelas_id" class="w-full border border-gray-300 p-2 rounded" required>
-                @foreach($kelas as $k)
-                    <option value="{{ $k->id }}">{{ $k->mataKuliah->nama ?? '' }} - {{ $k->nama }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div>
-            <label class="block text-sm font-medium mb-1">Mahasiswa</label>
-            <select name="mahasiswa_id" class="w-full border border-gray-300 p-2 rounded" required>
-                @foreach($mahasiswas as $mhs)
-                    <option value="{{ $mhs->id }}">{{ $mhs->nim }} - {{ $mhs->nama }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div>
-            <label class="block text-sm font-medium mb-1">Kuis (0-100)</label>
-            <input type="number" step="0.01" min="0" max="100" name="kuis" value="{{ old('kuis', 0) }}" class="w-full border border-gray-300 p-2 rounded">
-        </div>
-        <div>
-            <label class="block text-sm font-medium mb-1">Tugas (0-100)</label>
-            <input type="number" step="0.01" min="0" max="100" name="tugas" value="{{ old('tugas', 0) }}" class="w-full border border-gray-300 p-2 rounded">
-        </div>
-        <div>
-            <label class="block text-sm font-medium mb-1">UTS (0-100)</label>
-            <input type="number" step="0.01" min="0" max="100" name="uts" value="{{ old('uts', 0) }}" class="w-full border border-gray-300 p-2 rounded">
-        </div>
-        <div>
-            <label class="block text-sm font-medium mb-1">UAS (0-100)</label>
-            <input type="number" step="0.01" min="0" max="100" name="uas" value="{{ old('uas', 0) }}" class="w-full border border-gray-300 p-2 rounded">
-        </div>
-        <button type="submit" class="btn btn-primary">Simpan</button>
-    </form>
+    <div class="rounded-2xl bg-white p-8 shadow-xs border border-slate-200/80">
+        <form action="{{ route('admin.nilai.store') }}" method="POST" class="space-y-6">
+            @csrf
+
+            <div>
+                <label for="kelas_id" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                    Kelas Perkuliahan <span class="text-rose-500">*</span>
+                </label>
+                <select name="kelas_id"
+                        id="kelas_id"
+                        required
+                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-2xs">
+                    <option value="">Pilih Rombel Kelas</option>
+                    @foreach($kelas as $k)
+                        <option value="{{ $k->id }}" @selected(old('kelas_id') == $k->id)>
+                            {{ $k->mataKuliah?->nama ?? 'MK' }} - Kelas {{ $k->nama }} ({{ $k->semester }} {{ $k->tahun_akademik }})
+                        </option>
+                    @endforeach
+                </select>
+                @error('kelas_id')
+                    <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div>
+                <label for="mahasiswa_id" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                    Mahasiswa <span class="text-rose-500">*</span>
+                </label>
+                <select name="mahasiswa_id"
+                        id="mahasiswa_id"
+                        required
+                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-2xs">
+                    <option value="">Pilih Mahasiswa</option>
+                    @foreach($mahasiswas as $mhs)
+                        <option value="{{ $mhs->id }}" @selected(old('mahasiswa_id') == $mhs->id)>
+                            {{ $mhs->nim }} - {{ $mhs->nama }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('mahasiswa_id')
+                    <p class="mt-1 text-xs text-rose-600 font-medium">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
+                <div>
+                    <label for="kuis" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                        Kuis (15%)
+                    </label>
+                    <input type="number"
+                           step="0.01"
+                           min="0"
+                           max="100"
+                           name="kuis"
+                           id="kuis"
+                           value="{{ old('kuis', 0) }}"
+                           class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-2xs font-mono text-center">
+                    @error('kuis')
+                        <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="tugas" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                        Tugas (25%)
+                    </label>
+                    <input type="number"
+                           step="0.01"
+                           min="0"
+                           max="100"
+                           name="tugas"
+                           id="tugas"
+                           value="{{ old('tugas', 0) }}"
+                           class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-2xs font-mono text-center">
+                    @error('tugas')
+                        <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="uts" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                        UTS (25%)
+                    </label>
+                    <input type="number"
+                           step="0.01"
+                           min="0"
+                           max="100"
+                           name="uts"
+                           id="uts"
+                           value="{{ old('uts', 0) }}"
+                           class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-2xs font-mono text-center">
+                    @error('uts')
+                        <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="uas" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                        UAS (35%)
+                    </label>
+                    <input type="number"
+                           step="0.01"
+                           min="0"
+                           max="100"
+                           name="uas"
+                           id="uas"
+                           value="{{ old('uas', 0) }}"
+                           class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-2xs font-mono text-center">
+                    @error('uas')
+                        <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-600">
+                <span class="font-semibold text-slate-800">Kalkulasi Otomatis:</span> Nilai akhir, grade mutu (A/B/C/D/E), dan status kelulusan akan dihitung secara otomatis oleh sistem saat disimpan.
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+                <a href="{{ route('admin.nilai.index') }}"
+                   class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-xs font-semibold hover:bg-slate-50 transition">
+                    Batal
+                </a>
+                <button type="submit"
+                        class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs shadow-blue-500/20 transition">
+                    Simpan Nilai
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 @endsection

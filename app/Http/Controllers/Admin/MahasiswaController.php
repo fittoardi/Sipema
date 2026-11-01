@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\MahasiswaRequest;
 use App\Models\Mahasiswa;
 use App\Models\Prodi;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 
@@ -21,8 +22,9 @@ class MahasiswaController extends Controller
     public function create(): View
     {
         $prodis = Prodi::all();
+        $users = User::query()->where('role', 'mahasiswa')->get();
 
-        return view('admin.mahasiswa.create', compact('prodis'));
+        return view('admin.mahasiswa.create', compact('prodis', 'users'));
     }
 
     public function store(MahasiswaRequest $request): RedirectResponse
@@ -35,8 +37,9 @@ class MahasiswaController extends Controller
     public function edit(Mahasiswa $mahasiswa): View
     {
         $prodis = Prodi::all();
+        $users = User::query()->where('role', 'mahasiswa')->get();
 
-        return view('admin.mahasiswa.edit', compact('mahasiswa', 'prodis'));
+        return view('admin.mahasiswa.edit', compact('mahasiswa', 'prodis', 'users'));
     }
 
     public function update(MahasiswaRequest $request, Mahasiswa $mahasiswa): RedirectResponse
