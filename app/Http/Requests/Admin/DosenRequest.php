@@ -23,7 +23,7 @@ class DosenRequest extends FormRequest
             'nidn' => ['required', 'string', 'max:30'],
             'email' => ['required', 'email', 'max:255'],
             'nip' => ['required', 'string', 'max:30'],
-            'prodi_id' => ['required', 'exists:prodis,id'],
+            'prodi_id' => ['required', 'exists:program_studi,id'],
         ];
     }
 }

@@ -18,11 +18,11 @@ class KelasRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'mata_kuliah_id' => ['required', 'exists:mata_kuliahs,id'],
-            'dosen_id' => ['required', 'exists:dosens,id'],
+            'mata_kuliah_id' => ['required', 'exists:mata_kuliah,id'],
+            'dosen_id' => ['required', 'exists:dosen,id'],
             'nama' => ['required', 'string', 'max:255'],
-            'tahun_akademik' => ['required', 'string', 'max:20'],
-            'semester' => ['required', 'in:Ganjil,Genap'],
+            'tahun_akademik' => ['nullable', 'string', 'max:20'],
+            'semester' => ['nullable', 'in:Ganjil,Genap'],
         ];
     }
 }

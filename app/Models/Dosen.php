@@ -28,6 +28,15 @@ class Dosen extends Model
         'email',
     ];
 
+    protected static function booted(): void
+    {
+        static::creating(function (Dosen $dosen): void {
+            if (empty($dosen->nidn)) {
+                $dosen->nidn = fake()->unique()->numerify('00########');
+            }
+        });
+    }
+
     protected function prodiId(): Attribute
     {
         return Attribute::make(

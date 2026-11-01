@@ -19,7 +19,7 @@ class StoreNilaiRequest extends FormRequest
     {
         return [
             'kelas_id' => ['required', 'integer', 'exists:kelas,id'],
-            'mahasiswa_id' => ['required', 'integer', 'exists:mahasiswas,id'],
+            'mahasiswa_id' => ['required', 'integer', 'exists:mahasiswa,id'],
             'kuis' => ['required', 'numeric', 'between:0,100'],
             'tugas' => ['required', 'numeric', 'between:0,100'],
             'uts' => ['required', 'numeric', 'between:0,100'],
