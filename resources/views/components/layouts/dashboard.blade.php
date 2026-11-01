@@ -13,9 +13,12 @@
     ])
 </head>
 
-<body class="min-h-screen bg-sandy-desk text-deep-moss font-sans antialiased selection:bg-amber-glow selection:text-deep-moss">
+<body x-data="{ sidebarOpen: false }" class="min-h-screen bg-sandy-desk text-deep-moss font-sans antialiased selection:bg-amber-glow selection:text-deep-moss">
 
     <div class="flex h-screen overflow-hidden p-2 sm:p-3 gap-2 sm:gap-3">
+        <!-- Sidebar Backdrop -->
+        <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false" class="fixed inset-0 bg-deep-moss/50 z-40 lg:hidden"></div>
+
 
         {{-- Sidebar: Tactile File Manager --}}
         @include('components.layouts.sidebar')

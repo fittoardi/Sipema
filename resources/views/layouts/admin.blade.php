@@ -8,10 +8,13 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="min-h-screen bg-sandy-desk text-deep-moss font-sans antialiased selection:bg-amber-glow selection:text-deep-moss">
+<body x-data="{ sidebarOpen: false }" class="min-h-screen bg-sandy-desk text-deep-moss font-sans antialiased selection:bg-amber-glow selection:text-deep-moss">
     <div class="flex h-screen overflow-hidden p-2 sm:p-3 gap-2 sm:gap-3">
+        <!-- Sidebar Backdrop -->
+        <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false" class="fixed inset-0 bg-deep-moss/50 z-40 lg:hidden"></div>
+
         <!-- Sidebar: Tactile File Manager -->
-        <aside class="w-60 bg-cream-paper border border-warm-mist rounded-window flex-shrink-0 flex flex-col justify-between overflow-hidden">
+        <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" class="fixed inset-y-0 left-0 z-50 w-60 bg-cream-paper border border-warm-mist rounded-window flex-shrink-0 flex flex-col justify-between overflow-hidden transform lg:translate-x-0 lg:static transition-transform duration-200 ease-in-out">
             <div>
                 <!-- Window Title / Brand Header -->
                 <div class="px-4 py-3 border-b border-warm-mist bg-soft-linen flex items-center justify-between">
@@ -20,7 +23,9 @@
                         <span class="w-2.5 h-2.5 rounded-full bg-amber-400 border border-amber-500/50"></span>
                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 border border-emerald-500/50"></span>
                     </div>
-                    <span class="font-mono text-[11px] text-sage-gray">sipenma.sys</span>
+                    <button @click="sidebarOpen = false" class="lg:hidden text-sage-gray">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
                 </div>
 
                 <div class="px-4 py-3.5 border-b border-warm-mist bg-paper-white flex items-center gap-2.5">
@@ -132,8 +137,11 @@
         <!-- Main Window Container -->
         <main class="flex-1 flex flex-col overflow-hidden bg-paper-white border border-warm-mist rounded-window">
             <!-- Window Title Bar -->
-            <header class="window-titlebar flex-shrink-0">
+            <header class="window-titlebar flex-shrink-0 flex items-center justify-between">
                 <div class="flex items-center gap-2">
+                    <button @click="sidebarOpen = true" class="lg:hidden p-1 mr-2 text-sage-gray hover:text-deep-moss">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    </button>
                     <span class="font-mono text-sage-gray text-xs">sipenma://admin/@yield('window_file', 'workspace.mdx')</span>
                 </div>
                 <div class="font-semibold text-deep-moss text-xs">

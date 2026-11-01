@@ -19,7 +19,7 @@
 	};
 @endphp
 
-<aside class="w-60 bg-cream-paper border border-warm-mist rounded-window flex-shrink-0 flex flex-col justify-between overflow-hidden">
+<aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" class="fixed inset-y-0 left-0 z-50 w-60 bg-cream-paper border border-warm-mist rounded-window flex-shrink-0 flex flex-col justify-between overflow-hidden transform lg:translate-x-0 lg:static transition-transform duration-200 ease-in-out">
 	<div>
 		<!-- Window Header -->
 		<div class="px-4 py-3 border-b border-warm-mist bg-soft-linen flex items-center justify-between">
@@ -28,7 +28,9 @@
 				<span class="w-2.5 h-2.5 rounded-full bg-amber-400 border border-amber-500/50"></span>
 				<span class="w-2.5 h-2.5 rounded-full bg-emerald-400 border border-emerald-500/50"></span>
 			</div>
-			<span class="font-mono text-[11px] text-sage-gray">sipenma://portal</span>
+			<button @click="sidebarOpen = false" class="lg:hidden text-sage-gray">
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+			</button>
 		</div>
 
 		<!-- Identity Badge -->
