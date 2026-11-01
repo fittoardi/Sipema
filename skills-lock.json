@@ -7,11 +7,23 @@
       "skillPath": "skills/agent-browser/SKILL.md",
       "computedHash": "8ef1b537ca4f374a1aa57b363b47f2c015d3bf0e76fcb44fa168a0917df47586"
     },
+    "frontend-design": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-design/SKILL.md",
+      "computedHash": "106acf230014cbb43ca34e6410371321b56ca742f9ee0442e8ec05bf02eb0384"
+    },
     "hyperframes-cli": {
       "source": "heygen-com/hyperframes",
       "sourceType": "github",
       "skillPath": "skills/hyperframes-cli/SKILL.md",
       "computedHash": "fbb6e0c0f32b0beda8951c6967408b297cc4a972d322967f5045159a60526762"
+    },
+    "hyperframes-registry": {
+      "source": "heygen-com/hyperframes",
+      "sourceType": "github",
+      "skillPath": "skills/hyperframes-registry/SKILL.md",
+      "computedHash": "0517125857b29759206962aecb85aa808fd267949233f20be37960a98974edfb"
     },
     "ios-design": {
       "source": "uizze.sh",
