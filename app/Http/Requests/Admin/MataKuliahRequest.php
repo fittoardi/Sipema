@@ -26,11 +26,11 @@ class MataKuliahRequest extends FormRequest
                 'required',
                 'string',
                 'max:20',
-                Rule::unique('mata_kuliahs', 'kode')->ignore($matakuliahId),
+                Rule::unique('mata_kuliah', 'kode')->ignore($matakuliahId),
             ],
             'nama' => ['required', 'string', 'max:255'],
             'sks' => ['required', 'integer', 'min:1'],
-            'prodi_id' => ['required', 'exists:prodis,id'],
+            'prodi_id' => ['required', 'exists:program_studi,id'],
         ];
     }
 }

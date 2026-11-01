@@ -19,7 +19,7 @@ class NilaiRequest extends FormRequest
     {
         return [
             'kelas_id' => ['required', 'exists:kelas,id'],
-            'mahasiswa_id' => ['required', 'exists:mahasiswas,id'],
+            'mahasiswa_id' => ['required', 'exists:mahasiswa,id'],
             'kuis' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'tugas' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'uts' => ['nullable', 'numeric', 'min:0', 'max:100'],
