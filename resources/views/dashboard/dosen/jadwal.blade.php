@@ -61,9 +61,15 @@
                                 </td>
                                 <td class="px-4 py-3 text-right">
                                     @if($j->kelas_id)
-                                        <a href="{{ route('dosen.nilai.index', ['kelas_id' => $j->kelas_id]) }}" class="text-xs text-signal-blue hover:underline">
-                                            Nilai &rarr;
-                                        </a>
+                                        <div class="flex items-center justify-end gap-2">
+                                            <a href="{{ route('dosen.pertemuan.index', $j->kelas_id) }}" class="text-xs text-signal-blue hover:underline font-medium">
+                                                LMS &rarr;
+                                            </a>
+                                            <span class="text-warm-mist">|</span>
+                                            <a href="{{ route('dosen.nilai.index', ['kelas_id' => $j->kelas_id]) }}" class="text-xs text-signal-blue hover:underline font-medium">
+                                                Nilai &rarr;
+                                            </a>
+                                        </div>
                                     @endif
                                 </td>
                             </tr>

@@ -117,4 +117,3 @@ class TugasController extends Controller
         return Storage::disk('private')->download($submission->file_path);
     }
 }
-

@@ -117,4 +117,3 @@ class TugasController extends Controller
         return back()->with('success', "Sinkronisasi nilai tugas selesai. {$count} data nilai mahasiswa diperbarui.");
     }
 }
-
