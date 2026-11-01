@@ -16,8 +16,13 @@ class Nilai extends Model
 
     protected $table = 'nilai';
 
+    protected $tempKelasId;
+    protected $tempMahasiswaId;
+
     protected $fillable = [
         'kelas_mahasiswa_id',
+        'kelas_id',
+        'mahasiswa_id',
         'kuis',
         'tugas',
         'uts',
@@ -27,6 +32,29 @@ class Nilai extends Model
         'status',
         'updated_by',
     ];
+
+    public function setKelasIdAttribute($value): void
+    {
+        $this->tempKelasId = $value;
+        $this->resolveKelasMahasiswa();
+    }
+
+    public function setMahasiswaIdAttribute($value): void
+    {
+        $this->tempMahasiswaId = $value;
+        $this->resolveKelasMahasiswa();
+    }
+
+    protected function resolveKelasMahasiswa(): void
+    {
+        if (! empty($this->tempKelasId) && ! empty($this->tempMahasiswaId)) {
+            $km = KelasMahasiswa::firstOrCreate([
+                'kelas_id' => $this->tempKelasId,
+                'mahasiswa_id' => $this->tempMahasiswaId,
+            ]);
+            $this->attributes['kelas_mahasiswa_id'] = $km->id;
+        }
+    }
 
     protected function casts(): array
     {

@@ -18,10 +18,12 @@ class DashboardController extends Controller
         $prodis = Prodi::query()->withCount('mahasiswas')->get();
 
         $lastSemester = Nilai::query()
-            ->join('kelas', 'nilais.kelas_id', '=', 'kelas.id')
-            ->selectRaw('kelas.tahun_akademik as tahun, kelas.semester')
+            ->join('kelas_mahasiswa', 'nilai.kelas_mahasiswa_id', '=', 'kelas_mahasiswa.id')
+            ->join('kelas', 'kelas_mahasiswa.kelas_id', '=', 'kelas.id')
+            ->join('tahun_akademik', 'kelas.tahun_akademik_id', '=', 'tahun_akademik.id')
+            ->selectRaw('tahun_akademik.tahun as tahun, tahun_akademik.semester as semester')
             ->distinct()
-            ->orderByDesc('kelas.tahun_akademik')
+            ->orderByDesc('tahun_akademik.tahun')
             ->limit(6)
             ->get();
 
@@ -35,11 +37,13 @@ class DashboardController extends Controller
             ->values();
 
         $grafikNorm = Nilai::query()
-            ->join('kelas', 'nilais.kelas_id', '=', 'kelas.id')
-            ->selectRaw('kelas.tahun_akademik as tahun, kelas.semester, COUNT(nilais.id) as jumlah')
-            ->groupBy('kelas.tahun_akademik', 'kelas.semester')
-            ->orderBy('kelas.tahun_akademik')
-            ->orderBy('kelas.semester')
+            ->join('kelas_mahasiswa', 'nilai.kelas_mahasiswa_id', '=', 'kelas_mahasiswa.id')
+            ->join('kelas', 'kelas_mahasiswa.kelas_id', '=', 'kelas.id')
+            ->join('tahun_akademik', 'kelas.tahun_akademik_id', '=', 'tahun_akademik.id')
+            ->selectRaw('tahun_akademik.tahun as tahun, tahun_akademik.semester as semester, COUNT(nilai.id) as jumlah')
+            ->groupBy('tahun_akademik.tahun', 'tahun_akademik.semester')
+            ->orderBy('tahun_akademik.tahun')
+            ->orderBy('tahun_akademik.semester')
             ->get();
 
         return view('admin.dashboard.index', compact(

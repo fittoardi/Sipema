@@ -30,7 +30,7 @@ test('admin can create a prodi', function () {
         'nama_prodi' => 'Teknik Informatika',
     ])->assertRedirect(route('admin.prodi.index'));
 
-    expect(Prodi::where('kode_prodi', 'TI')->exists())->toBeTrue();
+    expect(Prodi::where('kode', 'TI')->exists())->toBeTrue();
 });
 
 test('admin can create academic resources', function () {

@@ -29,9 +29,9 @@ it('allows admin to create a new prodi', function (): void {
     ]);
 
     $response->assertRedirect(route('admin.prodi.index'));
-    $this->assertDatabaseHas('prodis', [
-        'kode_prodi' => 'SI',
-        'nama_prodi' => 'Sistem Informasi',
+    $this->assertDatabaseHas('program_studi', [
+        'kode' => 'SI',
+        'nama' => 'Sistem Informasi',
     ]);
 });
 
@@ -57,9 +57,9 @@ it('allows admin to update a prodi', function (): void {
     ]);
 
     $response->assertRedirect(route('admin.prodi.index'));
-    $this->assertDatabaseHas('prodis', [
+    $this->assertDatabaseHas('program_studi', [
         'id' => $prodi->id,
-        'nama_prodi' => 'Teknik Informatika Update',
+        'nama' => 'Teknik Informatika Update',
     ]);
 });
 
@@ -70,7 +70,8 @@ it('allows admin to delete a prodi', function (): void {
     $response = $this->actingAs($admin)->delete(route('admin.prodi.destroy', $prodi));
 
     $response->assertRedirect(route('admin.prodi.index'));
-    $this->assertDatabaseMissing('prodis', [
+    $this->assertDatabaseMissing('program_studi', [
         'id' => $prodi->id,
+        'deleted_at' => null,
     ]);
 });
