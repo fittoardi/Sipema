@@ -5,7 +5,8 @@
 	$menus = match($role) {
 		'admin' => [
 			['label' => 'Dashboard', 'route' => 'admin.dashboard', 'icon' => 'home'],
-			['label' => 'Program Studi', 'route' => 'admin.prodi.index', 'icon' => 'building'],
+			['label' => 'Kategori Fakultas', 'route' => 'admin.fakultas.index', 'icon' => 'building'],
+			['label' => 'Program Studi', 'route' => 'admin.prodi.index', 'icon' => 'academic-cap'],
 			['label' => 'Dosen Pengajar', 'route' => 'admin.dosen.index', 'icon' => 'users'],
 			['label' => 'Mahasiswa', 'route' => 'admin.mahasiswa.index', 'icon' => 'academic-cap'],
 			['label' => 'Mata Kuliah', 'route' => 'admin.matakuliah.index', 'icon' => 'book'],

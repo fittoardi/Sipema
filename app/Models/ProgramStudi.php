@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -18,6 +19,7 @@ class ProgramStudi extends Model
     protected $table = 'program_studi';
 
     protected $fillable = [
+        'fakultas_id',
         'kode',
         'nama',
         'kode_prodi',
@@ -38,6 +40,11 @@ class ProgramStudi extends Model
             get: fn () => $this->attributes['nama'] ?? null,
             set: fn ($value) => ['nama' => $value],
         );
+    }
+
+    public function fakultas(): BelongsTo
+    {
+        return $this->belongsTo(Fakultas::class, 'fakultas_id');
     }
 
     public function mahasiswas(): HasMany

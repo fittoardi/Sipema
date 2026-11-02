@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ProdiRequest;
+use App\Models\Fakultas;
 use App\Models\Prodi;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -12,14 +13,19 @@ class ProdiController extends Controller
 {
     public function index(): View
     {
-        $prodis = Prodi::query()->latest()->get();
+        $prodis = Prodi::query()
+            ->with('fakultas')
+            ->latest()
+            ->get();
 
         return view('admin.prodi.index', compact('prodis'));
     }
 
     public function create(): View
     {
-        return view('admin.prodi.create');
+        $fakultas = Fakultas::orderBy('nama')->get();
+
+        return view('admin.prodi.create', compact('fakultas'));
     }
 
     public function store(ProdiRequest $request): RedirectResponse
@@ -32,7 +38,9 @@ class ProdiController extends Controller
 
     public function edit(Prodi $prodi): View
     {
-        return view('admin.prodi.edit', compact('prodi'));
+        $fakultas = Fakultas::orderBy('nama')->get();
+
+        return view('admin.prodi.edit', compact('prodi', 'fakultas'));
     }
 
     public function update(ProdiRequest $request, Prodi $prodi): RedirectResponse

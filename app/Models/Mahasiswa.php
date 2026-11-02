@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[UseEloquentBuilder(Builder::class)]
@@ -51,6 +52,57 @@ class Mahasiswa extends Model
     public function prodi(): BelongsTo
     {
         return $this->belongsTo(ProgramStudi::class, 'program_studi_id');
+    }
+
+    public function fakultas(): HasOneThrough
+    {
+        return $this->hasOneThrough(
+            Fakultas::class,
+            ProgramStudi::class,
+            'id',
+            'id',
+            'program_studi_id',
+            'fakultas_id'
+        );
+    }
+
+    public function scopeFilterByFakultas(Builder $query, ?int $fakultasId): Builder
+    {
+        return $query->when($fakultasId, function (Builder $q) use ($fakultasId) {
+            $q->whereHas('programStudi', fn ($sub) => $sub->where('fakultas_id', $fakultasId));
+        });
+    }
+
+    public function scopeFilterByProdi(Builder $query, ?int $prodiId): Builder
+    {
+        return $query->when($prodiId, function (Builder $q) use ($prodiId) {
+            $q->where('program_studi_id', $prodiId);
+        });
+    }
+
+    public function scopeSearch(Builder $query, ?string $search): Builder
+    {
+        return $query->when($search, function (Builder $q) use ($search) {
+            $q->where(function (Builder $sub) use ($search) {
+                $sub->where('nama', 'like', "%{$search}%")
+                    ->orWhere('nim', 'like', "%{$search}%")
+                    ->orWhereHas('user', fn ($u) => $u->where('email', 'like', "%{$search}%"));
+            });
+        });
+    }
+
+    public function getFakultasBadgeColorAttribute(): string
+    {
+        $kode = strtoupper($this->programStudi?->fakultas?->kode ?? '');
+
+        return match ($kode) {
+            'FTI' => 'bg-blue-100 text-signal-blue border-signal-blue/30',
+            'FT' => 'bg-amber-100 text-deep-moss border-burnished-gold/40',
+            'FEB' => 'bg-emerald-100 text-emerald-800 border-emerald-300',
+            'FIK' => 'bg-purple-100 text-purple-800 border-purple-300',
+            'FH' => 'bg-rose-100 text-rose-800 border-rose-300',
+            default => 'bg-soft-linen text-olive-char border-warm-mist',
+        };
     }
 
     public function dosenWali(): BelongsTo

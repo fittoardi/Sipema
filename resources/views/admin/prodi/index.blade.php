@@ -11,10 +11,15 @@
             <h1 class="text-base font-bold text-deep-moss">Master Data Program Studi</h1>
             <p class="text-xs text-olive-char mt-0.5">Daftar fakultas dan program studi akademik yang tersedia.</p>
         </div>
-        <a href="{{ route('admin.prodi.create') }}" class="btn-amber">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-            Tambah Program Studi
-        </a>
+        <div class="flex items-center gap-2">
+            <a href="{{ route('admin.fakultas.index') }}" class="btn-mist">
+                Kelola Fakultas
+            </a>
+            <a href="{{ route('admin.prodi.create') }}" class="btn-amber">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                Tambah Program Studi
+            </a>
+        </div>
     </div>
 
     <div class="bg-paper-white border border-warm-mist rounded-[4px] overflow-hidden">
@@ -29,6 +34,7 @@
                     <tr>
                         <th class="px-4 py-2.5">Kode Prodi</th>
                         <th class="px-4 py-2.5">Nama Program Studi</th>
+                        <th class="px-4 py-2.5">Fakultas</th>
                         <th class="px-4 py-2.5 text-right">Aksi</th>
                     </tr>
                 </thead>
@@ -40,6 +46,15 @@
                             </td>
                             <td class="px-4 py-3 font-medium text-deep-moss">
                                 {{ $prodi->nama_prodi }}
+                            </td>
+                            <td class="px-4 py-3 text-olive-char">
+                                @if($prodi->fakultas)
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-soft-linen text-deep-moss border border-warm-mist">
+                                        {{ $prodi->fakultas->nama }} ({{ $prodi->fakultas->kode }})
+                                    </span>
+                                @else
+                                    <span class="text-sage-gray italic">Belum diatur</span>
+                                @endif
                             </td>
                             <td class="px-4 py-3 text-right">
                                 <div class="inline-flex items-center gap-1.5">
@@ -58,7 +73,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="px-4 py-8 text-center text-xs text-sage-gray">
+                            <td colspan="4" class="px-4 py-8 text-center text-xs text-sage-gray">
                                 Belum ada program studi yang terdaftar.
                             </td>
                         </tr>

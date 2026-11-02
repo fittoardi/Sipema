@@ -9,7 +9,7 @@
     <div class="flex items-center justify-between">
         <div>
             <h1 class="text-base font-bold text-deep-moss">Ubah Program Studi</h1>
-            <p class="text-xs text-olive-char mt-0.5">Perbarui informasi kode atau nama jurusan akademik.</p>
+            <p class="text-xs text-olive-char mt-0.5">Perbarui informasi kode, nama, atau fakultas jurusan akademik.</p>
         </div>
         <a href="{{ route('admin.prodi.index') }}" class="btn-mist">
             &larr; Kembali
@@ -20,6 +20,21 @@
         <form action="{{ route('admin.prodi.update', $prodi) }}" method="POST" class="space-y-4">
             @csrf
             @method('PUT')
+
+            <div>
+                <label for="fakultas_id" class="posthog-label">Kategori Fakultas</label>
+                <select name="fakultas_id" id="fakultas_id" class="posthog-input">
+                    <option value="">-- Tanpa Fakultas / Pilih Fakultas --</option>
+                    @foreach($fakultas as $item)
+                        <option value="{{ $item->id }}" {{ old('fakultas_id', $prodi->fakultas_id) == $item->id ? 'selected' : '' }}>
+                            {{ $item->nama }} ({{ $item->kode }})
+                        </option>
+                    @endforeach
+                </select>
+                @error('fakultas_id')
+                    <p class="mt-1 text-xs text-flame-orange">{{ $message }}</p>
+                @enderror
+            </div>
 
             <div>
                 <label for="kode_prodi" class="posthog-label">Kode Program Studi <span class="text-flame-orange">*</span></label>

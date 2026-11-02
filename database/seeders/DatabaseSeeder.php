@@ -12,6 +12,7 @@ class DatabaseSeeder extends Seeder
             PengaturanNilaiSeeder::class,
             SkalaGradeSeeder::class,
             TahunAkademikSeeder::class,
+            FakultasSeeder::class,
             ProdiSeeder::class,
             RuanganSeeder::class,
             AdminSeeder::class,

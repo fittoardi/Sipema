@@ -21,6 +21,21 @@
             @csrf
 
             <div>
+                <label for="fakultas_id" class="posthog-label">Kategori Fakultas</label>
+                <select name="fakultas_id" id="fakultas_id" class="posthog-input">
+                    <option value="">-- Pilih Fakultas (Opsional) --</option>
+                    @foreach($fakultas as $item)
+                        <option value="{{ $item->id }}" {{ old('fakultas_id') == $item->id ? 'selected' : '' }}>
+                            {{ $item->nama }} ({{ $item->kode }})
+                        </option>
+                    @endforeach
+                </select>
+                @error('fakultas_id')
+                    <p class="mt-1 text-xs text-flame-orange">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div>
                 <label for="kode_prodi" class="posthog-label">Kode Program Studi <span class="text-flame-orange">*</span></label>
                 <input type="text" name="kode_prodi" id="kode_prodi" required value="{{ old('kode_prodi') }}"
                        placeholder="Contoh: TI, SI, IF" class="posthog-input font-mono">

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Dosen;
+use App\Models\Fakultas;
 use App\Models\Kelas;
 use App\Models\Mahasiswa;
 use App\Models\MataKuliah;
@@ -17,7 +18,8 @@ uses(RefreshDatabase::class);
 test('database seeder populates at least 30 records for each core academic table', function () {
     $this->seed(DatabaseSeeder::class);
 
-    expect(Prodi::count())->toBeGreaterThanOrEqual(30)
+    expect(Fakultas::count())->toBeGreaterThanOrEqual(4)
+        ->and(Prodi::count())->toBeGreaterThanOrEqual(30)
         ->and(Dosen::count())->toBeGreaterThanOrEqual(30)
         ->and(Mahasiswa::count())->toBeGreaterThanOrEqual(30)
         ->and(MataKuliah::count())->toBeGreaterThanOrEqual(30)

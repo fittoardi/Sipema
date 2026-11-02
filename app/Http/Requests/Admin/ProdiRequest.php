@@ -22,6 +22,7 @@ class ProdiRequest extends FormRequest
         $prodiId = is_object($prodi) ? $prodi->id : $prodi;
 
         return [
+            'fakultas_id' => ['nullable', 'exists:fakultas,id'],
             'kode_prodi' => [
                 'required',
                 'string',

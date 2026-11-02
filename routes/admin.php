@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DosenController;
+use App\Http\Controllers\Admin\FakultasController;
 use App\Http\Controllers\Admin\KelasController;
 use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\MahasiswaController;
@@ -22,6 +23,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/pengaturan-nilai', [PengaturanNilaiController::class, 'index'])->name('pengaturan-nilai.index');
     Route::put('/pengaturan-nilai', [PengaturanNilaiController::class, 'update'])->name('pengaturan-nilai.update');
 
+    Route::resource('fakultas', FakultasController::class)->parameters(['fakultas' => 'fakultas']);
     Route::resource('prodi', ProdiController::class);
     Route::resource('dosen', DosenController::class);
     Route::resource('mahasiswa', MahasiswaController::class);
