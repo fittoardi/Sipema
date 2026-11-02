@@ -28,6 +28,10 @@
                             {{ $mahasiswa->user->name }}
                         </h1>
                         <div class="flex flex-wrap items-center gap-2 mt-1 text-xs text-olive-char font-mono">
+                            @if($mahasiswa->programStudi?->fakultas)
+                                <span class="tag-pill tag-pill-stone text-[10px] font-bold">{{ $mahasiswa->programStudi->fakultas->nama }} ({{ $mahasiswa->programStudi->fakultas->kode }})</span>
+                                <span>&bull;</span>
+                            @endif
                             <span class="font-bold text-deep-moss">{{ $mahasiswa->prodi->nama_prodi }}</span>
                             <span>&bull;</span>
                             <span>{{ $mahasiswa->user->email }}</span>
@@ -46,13 +50,15 @@
 
         {{-- Academic Metric Cards --}}
         <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-            {{-- Program Studi --}}
+            {{-- Program Studi & Fakultas --}}
             <div class="metric-card">
-                <p class="text-[11px] font-bold text-olive-char uppercase tracking-wider font-mono">Program Studi</p>
+                <p class="text-[11px] font-bold text-olive-char uppercase tracking-wider font-mono">Fakultas & Prodi</p>
                 <div class="mt-2 text-base font-black text-deep-moss line-clamp-1" title="{{ $mahasiswa->prodi->nama_prodi }}">
                     {{ $mahasiswa->prodi->nama_prodi }}
                 </div>
-                <div class="text-[11px] text-ash-green font-mono mt-1">Kode: {{ $mahasiswa->prodi->kode_prodi ?? '-' }}</div>
+                <div class="text-[11px] text-ash-green font-mono mt-1">
+                    {{ $mahasiswa->programStudi?->fakultas?->nama ?? 'Kode: ' . ($mahasiswa->prodi->kode_prodi ?? '-') }}
+                </div>
             </div>
 
             {{-- Mata Kuliah --}}

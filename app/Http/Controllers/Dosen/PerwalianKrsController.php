@@ -28,7 +28,7 @@ class PerwalianKrsController extends Controller
         $statusFilter = $request->query('status');
 
         $query = Mahasiswa::query()
-            ->with(['programStudi'])
+            ->with(['programStudi.fakultas'])
             ->with(['krs' => function ($q) use ($tahunAktif) {
                 $q->where('tahun_akademik_id', $tahunAktif->id)
                     ->with(['details.kelas.mataKuliah', 'details.kelas.dosen', 'details.kelas.ruangan']);

@@ -21,7 +21,7 @@ class DashboardController extends Controller
     {
         $user = $request->user();
 
-        $mahasiswa = Mahasiswa::with('prodi')
+        $mahasiswa = Mahasiswa::with(['prodi.fakultas', 'user'])
             ->where('user_id', $user?->id)
             ->firstOrFail();
 

@@ -4,27 +4,59 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\MahasiswaRequest;
+use App\Models\Fakultas;
 use App\Models\Mahasiswa;
 use App\Models\Prodi;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class MahasiswaController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $mahasiswas = Mahasiswa::query()->with('prodi')->latest()->get();
+        $fakultasId = $request->filled('fakultas_id') ? (int) $request->input('fakultas_id') : null;
+        $prodiId = $request->filled('prodi_id') ? (int) $request->input('prodi_id') : null;
+        $search = $request->input('search');
 
-        return view('admin.mahasiswa.index', compact('mahasiswas'));
+        $mahasiswas = Mahasiswa::query()
+            ->with(['prodi.fakultas', 'user', 'dosenWali'])
+            ->filterByFakultas($fakultasId)
+            ->filterByProdi($prodiId)
+            ->search($search)
+            ->latest()
+            ->get();
+
+        $fakultasList = Fakultas::with(['programStudi' => fn ($q) => $q->orderBy('nama')])
+            ->orderBy('nama')
+            ->get();
+
+        $prodisList = Prodi::with('fakultas')
+            ->when($fakultasId, fn ($q) => $q->where('fakultas_id', $fakultasId))
+            ->orderBy('nama')
+            ->get();
+
+        $totalMahasiswa = Mahasiswa::count();
+
+        return view('admin.mahasiswa.index', compact(
+            'mahasiswas',
+            'fakultasList',
+            'prodisList',
+            'fakultasId',
+            'prodiId',
+            'search',
+            'totalMahasiswa'
+        ));
     }
 
     public function create(): View
     {
-        $prodis = Prodi::all();
-        $users = User::query()->where('role', 'mahasiswa')->get();
+        $fakultas = Fakultas::with(['programStudi' => fn ($q) => $q->orderBy('nama')])->orderBy('nama')->get();
+        $prodis = Prodi::with('fakultas')->orderBy('nama')->get();
+        $users = User::query()->where('role', 'mahasiswa')->orderBy('name')->get();
 
-        return view('admin.mahasiswa.create', compact('prodis', 'users'));
+        return view('admin.mahasiswa.create', compact('fakultas', 'prodis', 'users'));
     }
 
     public function store(MahasiswaRequest $request): RedirectResponse
@@ -36,10 +68,12 @@ class MahasiswaController extends Controller
 
     public function edit(Mahasiswa $mahasiswa): View
     {
-        $prodis = Prodi::all();
-        $users = User::query()->where('role', 'mahasiswa')->get();
+        $mahasiswa->loadMissing(['prodi.fakultas']);
+        $fakultas = Fakultas::with(['programStudi' => fn ($q) => $q->orderBy('nama')])->orderBy('nama')->get();
+        $prodis = Prodi::with('fakultas')->orderBy('nama')->get();
+        $users = User::query()->where('role', 'mahasiswa')->orderBy('name')->get();
 
-        return view('admin.mahasiswa.edit', compact('mahasiswa', 'prodis', 'users'));
+        return view('admin.mahasiswa.edit', compact('mahasiswa', 'fakultas', 'prodis', 'users'));
     }
 
     public function update(MahasiswaRequest $request, Mahasiswa $mahasiswa): RedirectResponse

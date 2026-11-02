@@ -14,7 +14,7 @@ class MahasiswaSeeder extends Seeder
     public function run(): void
     {
         DB::transaction(function (): void {
-            $prodi = Prodi::where('kode', 'TI')->first() ?? Prodi::first();
+            $prodiTI = Prodi::where('kode', 'TI')->first() ?? Prodi::first();
             $dosenWali = Dosen::first();
 
             $user = User::updateOrCreate(
@@ -31,21 +31,46 @@ class MahasiswaSeeder extends Seeder
                 [
                     'nama' => 'Andi Pratama',
                     'nim' => '23110001',
-                    'program_studi_id' => $prodi->id,
+                    'program_studi_id' => $prodiTI->id,
                     'dosen_wali_id' => $dosenWali?->id,
                     'angkatan' => 2023,
                 ],
             );
 
-            $prodis = Prodi::all();
+            $prodis = Prodi::with('fakultas')->get();
             $dosens = Dosen::all();
             $remaining = 30 - Mahasiswa::count();
 
             if ($remaining > 0 && $prodis->isNotEmpty()) {
-                Mahasiswa::factory()->count($remaining)->create([
-                    'prodi_id' => fn () => $prodis->random()->id,
-                    'dosen_wali_id' => $dosens->isNotEmpty() ? fn () => $dosens->random()->id : null,
-                ]);
+                for ($i = 0; $i < $remaining; $i++) {
+                    $selectedProdi = $prodis[$i % $prodis->count()];
+                    $fakultasKode = $selectedProdi->fakultas?->kode ?? 'UN';
+                    $fakPrefix = match ($fakultasKode) {
+                        'FTI' => '11',
+                        'FT' => '21',
+                        'FEB' => '31',
+                        'FIK' => '41',
+                        default => '51',
+                    };
+                    $nim = '23'.$fakPrefix.str_pad((string) ($i + 2), 4, '0', STR_PAD_LEFT);
+
+                    $name = fake()->name();
+                    $mhsUser = User::create([
+                        'name' => $name,
+                        'email' => fake()->unique()->safeEmail(),
+                        'password' => 'password',
+                        'role' => 'mahasiswa',
+                    ]);
+
+                    Mahasiswa::create([
+                        'user_id' => $mhsUser->id,
+                        'nama' => $name,
+                        'nim' => $nim,
+                        'program_studi_id' => $selectedProdi->id,
+                        'dosen_wali_id' => $dosens->isNotEmpty() ? $dosens->random()->id : null,
+                        'angkatan' => fake()->numberBetween(2021, 2024),
+                    ]);
+                }
             }
         });
     }

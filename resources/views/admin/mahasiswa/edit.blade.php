@@ -9,7 +9,7 @@
     <div class="flex items-center justify-between">
         <div>
             <h1 class="text-base font-bold text-deep-moss">Ubah Data Mahasiswa</h1>
-            <p class="text-xs text-olive-char mt-0.5">Perbarui biodata, program studi, atau tahun angkatan.</p>
+            <p class="text-xs text-olive-char mt-0.5">Perbarui biodata, penempatan fakultas & program studi, atau tahun angkatan.</p>
         </div>
         <a href="{{ route('admin.mahasiswa.index') }}" class="btn-mist">
             &larr; Kembali
@@ -66,14 +66,32 @@
             </div>
 
             <div>
-                <label for="prodi_id" class="posthog-label">Program Studi <span class="text-flame-orange">*</span></label>
+                <label for="prodi_id" class="posthog-label">Kategori Fakultas & Program Studi <span class="text-flame-orange">*</span></label>
                 <select name="prodi_id" id="prodi_id" required class="posthog-select">
-                    <option value="">Pilih Program Studi</option>
-                    @foreach($prodis as $prodi)
-                        <option value="{{ $prodi->id }}" @selected($prodi->id == old('prodi_id', $mahasiswa->prodi_id))>
-                            {{ $prodi->nama_prodi }} ({{ $prodi->kode_prodi }})
-                        </option>
+                    <option value="">-- Pilih Program Studi --</option>
+                    @foreach($fakultas as $fak)
+                        @if($fak->programStudi->isNotEmpty())
+                            <optgroup label="{{ $fak->nama }} ({{ $fak->kode }})">
+                                @foreach($fak->programStudi as $prodi)
+                                    <option value="{{ $prodi->id }}" @selected($prodi->id == old('prodi_id', $mahasiswa->program_studi_id))>
+                                        {{ $prodi->nama_prodi }} ({{ $prodi->kode_prodi }})
+                                    </option>
+                                @endforeach
+                            </optgroup>
+                        @endif
                     @endforeach
+                    @php
+                        $unassignedProdis = $prodis->filter(fn ($p) => empty($p->fakultas_id));
+                    @endphp
+                    @if($unassignedProdis->isNotEmpty())
+                        <optgroup label="Program Studi Lainnya (Tanpa Fakultas)">
+                            @foreach($unassignedProdis as $prodi)
+                                <option value="{{ $prodi->id }}" @selected($prodi->id == old('prodi_id', $mahasiswa->program_studi_id))>
+                                    {{ $prodi->nama_prodi }} ({{ $prodi->kode_prodi }})
+                                </option>
+                            @endforeach
+                        </optgroup>
+                    @endif
                 </select>
                 @error('prodi_id')
                     <p class="mt-1 text-xs text-flame-orange">{{ $message }}</p>

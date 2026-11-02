@@ -80,7 +80,16 @@
                                     <div class="font-bold text-deep-moss">{{ $mhs->nama }}</div>
                                     <div class="text-[10px] font-mono text-olive-char">NIM: {{ $mhs->nim }}</div>
                                 </td>
-                                <td class="px-4 py-3 text-deep-moss">{{ $mhs->programStudi->nama ?? $mhs->programStudi->nama_prodi }}</td>
+                                <td class="px-4 py-3">
+                                    <div class="font-medium text-deep-moss text-xs">{{ $mhs->programStudi->nama ?? $mhs->programStudi->nama_prodi }}</div>
+                                    @if($mhs->programStudi?->fakultas)
+                                        <div class="mt-0.5">
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border {{ $mhs->fakultas_badge_color }}">
+                                                {{ $mhs->programStudi->fakultas->kode }}
+                                            </span>
+                                        </div>
+                                    @endif
+                                </td>
                                 <td class="px-4 py-3 text-center font-mono">{{ $mhs->angkatan }}</td>
                                 <td class="px-4 py-3 text-center font-mono font-bold text-deep-moss">
                                     {{ $krs ? $krs->total_sks : 0 }} SKS
