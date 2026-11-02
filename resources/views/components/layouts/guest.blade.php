@@ -9,10 +9,7 @@
 
     @vite([
         'resources/css/app.css',
-        'resources/css/auth.css',
         'resources/js/app.js',
-        'resources/js/auth.js',
-        'resources/js/password-toggle.js',
     ])
 </head>
 
