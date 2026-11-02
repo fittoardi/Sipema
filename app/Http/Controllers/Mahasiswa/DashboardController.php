@@ -6,9 +6,11 @@ use App\Concerns\StreamsCsv;
 use App\Enums\StatusNilai;
 use App\Http\Controllers\Controller;
 use App\Models\Kelas;
+use App\Models\KelasMahasiswa;
 use App\Models\Mahasiswa;
 use App\Models\MataKuliah;
 use App\Models\Nilai;
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -33,7 +35,34 @@ class DashboardController extends Controller
         $rataNilai = $jumlahNilai > 0 ? (float) $nilais->avg('nilai_akhir') : null;
 
         $jumlahMataKuliah = MataKuliah::where('program_studi_id', $mahasiswa->program_studi_id)->count();
-        $jumlahJadwal = Kelas::count();
+
+        // Retrieve enrolled classes
+        $kelasIds = KelasMahasiswa::where('mahasiswa_id', $mahasiswa->id)
+            ->pluck('kelas_id')
+            ->merge(
+                $mahasiswa->krsAktif?->krsDetail()->pluck('kelas_id') ?? collect()
+            )
+            ->unique()
+            ->values();
+
+        $carbonDayToHari = [
+            0 => 'Minggu',
+            1 => 'Senin',
+            2 => 'Selasa',
+            3 => 'Rabu',
+            4 => 'Kamis',
+            5 => 'Jumat',
+            6 => 'Sabtu',
+        ];
+
+        $todayHari = $carbonDayToHari[Carbon::now('Asia/Jakarta')->dayOfWeek] ?? 'Senin';
+
+        $jadwalHariIni = Kelas::with(['mataKuliah', 'ruangan', 'dosen.user', 'pertemuan' => fn ($q) => $q->orderBy('pertemuan_ke')])
+            ->whereIn('id', $kelasIds)
+            ->where('hari', $todayHari)
+            ->get();
+
+        $jumlahJadwal = $kelasIds->count();
 
         return view('dashboard.mahasiswa.index', [
             'mahasiswa' => $mahasiswa,
@@ -42,6 +71,8 @@ class DashboardController extends Controller
             'jumlahNilai' => $jumlahNilai,
             'rataNilai' => $rataNilai,
             'nilais' => $nilais,
+            'jadwalHariIni' => $jadwalHariIni,
+            'todayHari' => $todayHari,
         ]);
     }
 

@@ -40,6 +40,10 @@
                 </div>
 
                 <div class="flex items-center gap-2">
+                    <a href="{{ route('mahasiswa.jadwal') }}" class="btn-mist inline-flex items-center gap-2 text-xs">
+                        <svg class="w-3.5 h-3.5 text-signal-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        Jadwal & Kalender
+                    </a>
                     <a href="{{ route('mahasiswa.dashboard.download-nilai') }}" class="btn-amber inline-flex items-center gap-2 text-xs">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                         Unduh Transkrip (CSV)
@@ -86,6 +90,70 @@
                     {{ $rataNilai !== null ? number_format($rataNilai, 2) : '-' }}
                 </div>
                 <div class="text-[11px] text-ash-green font-mono mt-1">Skala kumulatif (0 - 100)</div>
+            </div>
+        </div>
+
+        {{-- Jadwal Kuliah Hari Ini & Kalender Ringkas --}}
+        <div class="bg-paper-white border border-warm-mist rounded-[4px] p-4 shadow-2xs">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-3 border-b border-warm-mist">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-signal-blue"></span>
+                    <h2 class="text-xs font-bold text-deep-moss uppercase tracking-wider">Perkuliahan Hari Ini ({{ $todayHari }}, {{ date('d M Y') }})</h2>
+                    <span class="tag-pill tag-pill-blue text-[10px] font-mono">{{ $jadwalHariIni->count() }} Sesi Terjadwal</span>
+                </div>
+                <a href="{{ route('mahasiswa.jadwal') }}" class="text-xs text-signal-blue hover:underline font-mono font-bold inline-flex items-center gap-1">
+                    Buka Kalender & Jadwal Lengkap &rarr;
+                </a>
+            </div>
+
+            <div class="mt-3">
+                @if($jadwalHariIni->isNotEmpty())
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        @foreach($jadwalHariIni as $jk)
+                            @php
+                                $pertemuanBuka = $jk->pertemuan->firstWhere('is_presensi_open', true);
+                            @endphp
+                            <div class="p-3 rounded-[4px] border border-warm-mist bg-cream-paper hover:bg-white transition flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between text-[11px] font-mono mb-1">
+                                        <span class="font-bold text-deep-moss">{{ substr($jk->jam_mulai, 0, 5) }} - {{ substr($jk->jam_selesai, 0, 5) }} WIB</span>
+                                        <span class="tag-pill text-[9px] {{ $jk->tipe_kelas?->value === 'online' ? 'tag-pill-blue' : 'tag-pill-green' }}">
+                                            {{ strtoupper($jk->tipe_kelas?->value ?? 'OFFLINE') }}
+                                        </span>
+                                    </div>
+                                    <h3 class="text-xs font-bold text-deep-moss">{{ $jk->mataKuliah?->nama ?? 'Mata Kuliah' }}</h3>
+                                    <p class="text-[11px] text-olive-char font-mono mt-0.5">
+                                        Kelas {{ $jk->nama_kelas }} &bull; {{ $jk->ruangan?->nama ?? 'Online / Zoom' }}
+                                    </p>
+                                    <p class="text-[10px] text-sage-gray mt-1 truncate">
+                                        Dosen: {{ $jk->dosen?->nama ?? '-' }}
+                                    </p>
+                                </div>
+
+                                <div class="mt-2.5 pt-2 border-t border-warm-mist flex items-center justify-between">
+                                    <span class="text-[10px] font-mono text-sage-gray">{{ $jk->mataKuliah?->sks ?? 3 }} SKS</span>
+                                    @if($pertemuanBuka)
+                                        <a href="{{ route('mahasiswa.presensi.show', $pertemuanBuka->id) }}" class="btn-amber text-[10px] py-1 px-2 font-bold inline-flex items-center gap-1">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+                                            Absen Sekarang
+                                        </a>
+                                    @else
+                                        <span class="text-[10px] font-mono text-sage-gray">Terjadwal</span>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="py-6 text-center text-sage-gray bg-cream-paper/50 rounded-[4px] border border-dashed border-warm-mist">
+                        <svg class="w-6 h-6 mx-auto mb-1 text-sage-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        <p class="text-xs font-bold text-olive-char">Tidak ada jadwal kuliah hari ini ({{ $todayHari }}).</p>
+                        <p class="text-[11px] text-sage-gray mt-0.5">Nikmati waktu belajar mandiri atau persiapkan materi untuk sesi berikutnya.</p>
+                        <a href="{{ route('mahasiswa.jadwal') }}" class="text-[11px] font-mono font-bold text-signal-blue hover:underline mt-2 inline-block">
+                            Lihat Jadwal Hari Lainnya &rarr;
+                        </a>
+                    </div>
+                @endif
             </div>
         </div>
 

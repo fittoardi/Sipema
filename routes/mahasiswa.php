@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Mahasiswa\DashboardController;
+use App\Http\Controllers\Mahasiswa\JadwalController;
 use App\Http\Controllers\Mahasiswa\KrsController;
 use App\Http\Controllers\Mahasiswa\PresensiSayaController;
 use App\Http\Controllers\Mahasiswa\TugasController;
@@ -16,6 +17,10 @@ Route::middleware(['auth', 'role:mahasiswa'])
 
         Route::get('/dashboard/download-nilai', [DashboardController::class, 'downloadNilai'])
             ->name('dashboard.download-nilai');
+
+        // Jadwal Perkuliahan & Kalender
+        Route::get('/jadwal', [JadwalController::class, 'index'])
+            ->name('jadwal');
 
         // KRS Online
         Route::get('/krs', [KrsController::class, 'index'])->name('krs.index');

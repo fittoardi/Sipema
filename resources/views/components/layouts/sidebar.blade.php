@@ -25,6 +25,7 @@
 		],
 		'mahasiswa' => [
 			['label' => 'Dashboard Nilai', 'route' => 'mahasiswa.dashboard', 'icon' => 'home'],
+			['label' => 'Jadwal & Kalender', 'route' => 'mahasiswa.jadwal', 'icon' => 'calendar'],
 			['label' => 'KRS Online', 'route' => 'mahasiswa.krs.index', 'icon' => 'clipboard'],
 			['label' => 'Unduh Nilai (CSV)', 'route' => 'mahasiswa.dashboard.download-nilai', 'icon' => 'download'],
 		],
