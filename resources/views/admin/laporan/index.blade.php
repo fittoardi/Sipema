@@ -91,7 +91,12 @@
                 <tbody class="divide-y divide-warm-mist">
                     @forelse ($nilais as $nilai)
                         @php
-                            $isLulus = strtolower((string) $nilai->status) === 'lulus';
+                            $isLulus = $nilai->status instanceof \App\Enums\StatusNilai
+                                ? $nilai->status === \App\Enums\StatusNilai::Lulus
+                                : strtolower((string) ($nilai->status->value ?? $nilai->status ?? '')) === 'lulus';
+                            $statusLabel = $nilai->status instanceof \App\Enums\StatusNilai
+                                ? $nilai->status->label()
+                                : (string) ($nilai->status->value ?? $nilai->status ?? '-');
                             $gradePill = match($nilai->grade) {
                                 'A' => 'tag-pill-green',
                                 'B' => 'tag-pill-blue',
@@ -128,7 +133,7 @@
                             </td>
                             <td class="px-4 py-3 text-center">
                                 <span class="tag-pill {{ $isLulus ? 'tag-pill-green' : 'tag-pill-orange' }}">
-                                    {{ $nilai->status }}
+                                    {{ $statusLabel }}
                                 </span>
                             </td>
                         </tr>

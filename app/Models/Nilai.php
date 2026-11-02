@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 #[UseEloquentBuilder(Builder::class)]
 class Nilai extends Model
@@ -90,14 +91,28 @@ class Nilai extends Model
         return $this->belongsTo(KelasMahasiswa::class, 'kelas_mahasiswa_id');
     }
 
-    public function getKelasAttribute()
+    public function kelas(): HasOneThrough
     {
-        return $this->kelasMahasiswa?->kelas;
+        return $this->hasOneThrough(
+            Kelas::class,
+            KelasMahasiswa::class,
+            'id',
+            'id',
+            'kelas_mahasiswa_id',
+            'kelas_id'
+        );
     }
 
-    public function getMahasiswaAttribute()
+    public function mahasiswa(): HasOneThrough
     {
-        return $this->kelasMahasiswa?->mahasiswa;
+        return $this->hasOneThrough(
+            Mahasiswa::class,
+            KelasMahasiswa::class,
+            'id',
+            'id',
+            'kelas_mahasiswa_id',
+            'mahasiswa_id'
+        );
     }
 
     public function getMahasiswaIdAttribute()

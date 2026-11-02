@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Concerns\StreamsCsv;
+use App\Enums\StatusNilai;
 use App\Http\Controllers\Controller;
 use App\Models\Kelas;
 use App\Models\Nilai;
@@ -43,7 +44,7 @@ class LaporanController extends Controller
             $nilai->kelas?->nama ?? '-',
             $nilai->nilai_akhir,
             $nilai->grade,
-            $nilai->status,
+            $nilai->status instanceof StatusNilai ? $nilai->status->label() : (string) ($nilai->status->value ?? $nilai->status ?? '-'),
         ]);
     }
 
@@ -77,7 +78,7 @@ class LaporanController extends Controller
                     $nilai->uas,
                     $nilai->nilai_akhir,
                     $nilai->grade,
-                    $nilai->status,
+                    $nilai->status instanceof StatusNilai ? $nilai->status->label() : (string) ($nilai->status->value ?? $nilai->status ?? '-'),
                 ]);
             }
 
@@ -117,11 +118,13 @@ class LaporanController extends Controller
             ->with(['kelas.mataKuliah', 'mahasiswa.prodi', 'kelas.dosen'])
             ->when($request->filled('prodi_id'), function (Builder $query) use ($request): void {
                 $query->whereHas('mahasiswa', function (Builder $q) use ($request): void {
-                    $q->where('prodi_id', $request->integer('prodi_id'));
+                    $q->where('program_studi_id', $request->integer('prodi_id'));
                 });
             })
             ->when($request->filled('kelas_id'), function (Builder $query) use ($request): void {
-                $query->where('kelas_id', $request->integer('kelas_id'));
+                $query->whereHas('kelas', function (Builder $q) use ($request): void {
+                    $q->where('id', $request->integer('kelas_id'));
+                });
             });
     }
 }

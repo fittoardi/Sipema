@@ -50,9 +50,9 @@
                 <td>{{ $nilai->mahasiswa?->prodi?->nama_prodi ?? '-' }}</td>
                 <td>{{ $nilai->kelas?->mataKuliah?->nama ?? '-' }}</td>
                 <td>{{ $nilai->kelas?->nama ?? '-' }}</td>
-                <td>{{ number_format($nilai->nilai_akhir, 2) }}</td>
+                <td>{{ number_format((float) $nilai->nilai_akhir, 2) }}</td>
                 <td>{{ $nilai->grade }}</td>
-                <td>{{ $nilai->status }}</td>
+                <td>{{ $nilai->status instanceof \App\Enums\StatusNilai ? $nilai->status->label() : ($nilai->status->value ?? $nilai->status ?? '-') }}</td>
             </tr>
             @endforeach
         </tbody>

@@ -125,11 +125,11 @@
 
             {{-- Demo Hint Box --}}
             <div class="mt-6 rounded-[4px] bg-soft-linen border border-warm-mist p-3 text-[11px] font-mono text-olive-char">
-                <div class="font-bold text-deep-moss mb-1">Akun Demo (Lihat DEMO_ACCOUNTS.md):</div>
+                <div class="font-bold text-deep-moss mb-1">Akun Demo (Lihat DEMO_ACCOUNTS.md / AKUN_DEMO.md):</div>
                 <div class="space-y-0.5">
-                    <div>Admin: <span class="text-deep-moss font-semibold">admin</span> (pass: password)</div>
-                    <div>Dosen: <span class="text-deep-moss font-semibold">198001012005011001</span> (pass: password)</div>
-                    <div>Mhs: <span class="text-deep-moss font-semibold">210101001</span> (pass: password)</div>
+                    <div>Admin: <span class="text-deep-moss font-semibold">admin</span> atau <span class="text-deep-moss font-semibold">admin@sipenma.test</span> (pass: password)</div>
+                    <div>Dosen: <span class="text-deep-moss font-semibold">0012345678</span> atau <span class="text-deep-moss font-semibold">budi@sipenma.test</span> (pass: password)</div>
+                    <div>Mhs: <span class="text-deep-moss font-semibold">23110001</span> atau <span class="text-deep-moss font-semibold">andi@sipenma.test</span> (pass: password)</div>
                 </div>
             </div>
 

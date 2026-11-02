@@ -5,6 +5,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -26,6 +27,11 @@ return Application::configure(basePath: dirname(__DIR__))
                 if ($user?->isMahasiswa()) {
                     return route('mahasiswa.dashboard');
                 }
+
+                // If user is authenticated but role is invalid or unset, clear session to prevent redirect loop
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
 
                 return route('login');
             }
