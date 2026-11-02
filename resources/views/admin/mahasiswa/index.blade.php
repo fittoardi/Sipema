@@ -41,11 +41,30 @@
     </div>
 
     {{-- Filter & Search Form --}}
-    <div class="bg-paper-white border border-warm-mist rounded-[4px] p-3">
+    <div class="bg-paper-white border border-warm-mist rounded-[4px] p-3"
+         x-data="{
+             selectedFakultas: '{{ $fakultasId ?? '' }}',
+             selectedProdi: '{{ $prodiId ?? '' }}',
+             onFakultasChange(newFakId) {
+                 this.selectedFakultas = newFakId;
+                 if (this.selectedFakultas && this.selectedProdi) {
+                     const selectedOpt = this.$refs.prodiSelect ? this.$refs.prodiSelect.querySelector(`option[value='${this.selectedProdi}']`) : null;
+                     if (selectedOpt && selectedOpt.dataset.fakultasId && selectedOpt.dataset.fakultasId !== this.selectedFakultas) {
+                         this.selectedProdi = '';
+                     }
+                 }
+             }
+         }">
         <form method="GET" action="{{ route('admin.mahasiswa.index') }}" class="grid grid-cols-1 sm:grid-cols-12 gap-2 text-xs">
             {{-- Filter Fakultas --}}
             <div class="sm:col-span-3">
-                <select name="fakultas_id" onchange="this.form.submit()" class="posthog-select text-xs">
+                <label class="block text-[10px] font-bold text-olive-char uppercase tracking-wider mb-1">
+                    Fakultas
+                </label>
+                <select name="fakultas_id"
+                        x-model="selectedFakultas"
+                        @change="onFakultasChange($event.target.value); $el.form.submit()"
+                        class="posthog-select text-xs">
                     <option value="">-- Semua Fakultas --</option>
                     @foreach($fakultasList as $fak)
                         <option value="{{ $fak->id }}" @selected($fakultasId == $fak->id)>
@@ -57,19 +76,71 @@
 
             {{-- Filter Prodi --}}
             <div class="sm:col-span-4">
-                <select name="prodi_id" onchange="this.form.submit()" class="posthog-select text-xs">
+                <div class="flex items-center justify-between mb-1">
+                    <label class="block text-[10px] font-bold text-olive-char uppercase tracking-wider">
+                        Program Studi
+                    </label>
+                    <span x-show="selectedFakultas" class="text-[10px] font-mono text-signal-blue font-semibold" style="display: none;">
+                        &bull; Hanya Fakultas Terpilih
+                    </span>
+                </div>
+                <select name="prodi_id"
+                        x-ref="prodiSelect"
+                        x-model="selectedProdi"
+                        @change="$el.form.submit()"
+                        class="posthog-select text-xs">
                     <option value="">-- Semua Program Studi --</option>
-                    @foreach($prodisList as $prodi)
-                        <option value="{{ $prodi->id }}" @selected($prodiId == $prodi->id)>
-                            {{ $prodi->nama_prodi }} ({{ $prodi->kode_prodi }})
-                            @if($prodi->fakultas) &bull; {{ $prodi->fakultas->kode }} @endif
-                        </option>
+                    @foreach($fakultasList as $fak)
+                        @if($fak->programStudi->isNotEmpty())
+                            @php
+                                $isFakDisabled = !empty($fakultasId) && (string)$fakultasId !== (string)$fak->id;
+                            @endphp
+                            <optgroup label="{{ $fak->nama }} ({{ $fak->kode }})"
+                                      :disabled="Boolean(selectedFakultas && selectedFakultas != '{{ $fak->id }}')"
+                                      @disabled($isFakDisabled)>
+                                @foreach($fak->programStudi as $prodi)
+                                    @php
+                                        $isProdiDisabled = !empty($fakultasId) && (string)$fakultasId !== (string)$fak->id;
+                                    @endphp
+                                    <option value="{{ $prodi->id }}"
+                                            data-fakultas-id="{{ $fak->id }}"
+                                            :disabled="Boolean(selectedFakultas && selectedFakultas != '{{ $fak->id }}')"
+                                            @disabled($isProdiDisabled)
+                                            @selected($prodiId == $prodi->id)>
+                                        {{ $prodi->nama_prodi }} ({{ $prodi->kode_prodi }})
+                                        @if($isProdiDisabled) [Nonaktif - Beda Fakultas] @endif
+                                    </option>
+                                @endforeach
+                            </optgroup>
+                        @endif
                     @endforeach
+                    @php
+                        $unassignedProdis = $prodisList->filter(fn ($p) => empty($p->fakultas_id));
+                    @endphp
+                    @if($unassignedProdis->isNotEmpty())
+                        <optgroup label="Program Studi Tanpa Fakultas"
+                                  :disabled="Boolean(selectedFakultas)"
+                                  @disabled(!empty($fakultasId))>
+                            @foreach($unassignedProdis as $prodi)
+                                <option value="{{ $prodi->id }}"
+                                        data-fakultas-id=""
+                                        :disabled="Boolean(selectedFakultas)"
+                                        @disabled(!empty($fakultasId))
+                                        @selected($prodiId == $prodi->id)>
+                                    {{ $prodi->nama_prodi }} ({{ $prodi->kode_prodi }})
+                                    @if(!empty($fakultasId)) [Nonaktif - Tanpa Fakultas] @endif
+                                </option>
+                            @endforeach
+                        </optgroup>
+                    @endif
                 </select>
             </div>
 
             {{-- Search Input --}}
             <div class="sm:col-span-4">
+                <label class="block text-[10px] font-bold text-olive-char uppercase tracking-wider mb-1">
+                    Pencarian Mahasiswa
+                </label>
                 <div class="relative">
                     <input type="text" name="search" value="{{ $search }}"
                            placeholder="Cari NIM, Nama, atau Email..."
@@ -81,15 +152,17 @@
             </div>
 
             {{-- Action Buttons --}}
-            <div class="sm:col-span-1 flex items-center gap-1">
-                <button type="submit" class="btn-amber w-full justify-center text-xs py-1.5" title="Terapkan Filter">
-                    Cari
-                </button>
-                @if($fakultasId || $prodiId || $search)
-                    <a href="{{ route('admin.mahasiswa.index') }}" class="btn-mist px-2 py-1.5 text-xs text-flame-orange hover:bg-rose-50" title="Reset Filter">
-                        &times;
-                    </a>
-                @endif
+            <div class="sm:col-span-1 flex flex-col justify-end">
+                <div class="flex items-center gap-1">
+                    <button type="submit" class="btn-amber w-full justify-center text-xs py-1.5" title="Terapkan Filter / Cari">
+                        Cari
+                    </button>
+                    @if($fakultasId || $prodiId || $search)
+                        <a href="{{ route('admin.mahasiswa.index') }}" class="btn-mist px-2 py-1.5 text-xs text-flame-orange hover:bg-rose-50" title="Reset Filter">
+                            &times;
+                        </a>
+                    @endif
+                </div>
             </div>
         </form>
     </div>

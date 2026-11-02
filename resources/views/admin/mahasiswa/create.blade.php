@@ -64,37 +64,76 @@
                 @enderror
             </div>
 
-            <div>
-                <label for="prodi_id" class="posthog-label">Kategori Fakultas & Program Studi <span class="text-flame-orange">*</span></label>
-                <select name="prodi_id" id="prodi_id" required class="posthog-select">
-                    <option value="">-- Pilih Program Studi --</option>
-                    @foreach($fakultas as $fak)
-                        @if($fak->programStudi->isNotEmpty())
-                            <optgroup label="{{ $fak->nama }} ({{ $fak->kode }})">
-                                @foreach($fak->programStudi as $prodi)
-                                    <option value="{{ $prodi->id }}" @selected(old('prodi_id') == $prodi->id)>
+            <div x-data="{
+                selectedFakultas: '',
+                selectedProdi: '{{ old('prodi_id') }}',
+                onFakultasChange(value) {
+                    this.selectedFakultas = value;
+                    if (this.selectedProdi && this.selectedFakultas) {
+                        const opt = this.$refs.prodiSelect ? this.$refs.prodiSelect.querySelector(`option[value='${this.selectedProdi}']`) : null;
+                        if (opt && opt.dataset.fakultasId && opt.dataset.fakultasId !== this.selectedFakultas) {
+                            this.selectedProdi = '';
+                        }
+                    }
+                }
+            }" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                    <label for="filter_fakultas" class="posthog-label">Pilih Fakultas (Filter Pilihan)</label>
+                    <select id="filter_fakultas"
+                            x-model="selectedFakultas"
+                            @change="onFakultasChange($event.target.value)"
+                            class="posthog-select">
+                        <option value="">-- Semua Fakultas (Pilihan Bebas) --</option>
+                        @foreach($fakultas as $fak)
+                            <option value="{{ $fak->id }}">{{ $fak->kode }} - {{ $fak->nama }}</option>
+                        @endforeach
+                    </select>
+                    <p class="mt-1 text-[11px] text-sage-gray">Pilih fakultas untuk mengunci prodi dan menonaktifkan prodi fakultas lain.</p>
+                </div>
+
+                <div>
+                    <label for="prodi_id" class="posthog-label">Program Studi <span class="text-flame-orange">*</span></label>
+                    <select name="prodi_id" id="prodi_id" required
+                            x-ref="prodiSelect"
+                            x-model="selectedProdi"
+                            class="posthog-select">
+                        <option value="">-- Pilih Program Studi --</option>
+                        @foreach($fakultas as $fak)
+                            @if($fak->programStudi->isNotEmpty())
+                                <optgroup label="{{ $fak->nama }} ({{ $fak->kode }})"
+                                          :disabled="Boolean(selectedFakultas && selectedFakultas != '{{ $fak->id }}')">
+                                    @foreach($fak->programStudi as $prodi)
+                                        <option value="{{ $prodi->id }}"
+                                                data-fakultas-id="{{ $fak->id }}"
+                                                :disabled="Boolean(selectedFakultas && selectedFakultas != '{{ $fak->id }}')"
+                                                @selected(old('prodi_id') == $prodi->id)>
+                                            {{ $prodi->nama_prodi }} ({{ $prodi->kode_prodi }})
+                                        </option>
+                                    @endforeach
+                                </optgroup>
+                            @endif
+                        @endforeach
+                        @php
+                            $unassignedProdis = $prodis->filter(fn ($p) => empty($p->fakultas_id));
+                        @endphp
+                        @if($unassignedProdis->isNotEmpty())
+                            <optgroup label="Program Studi Lainnya (Tanpa Fakultas)"
+                                      :disabled="Boolean(selectedFakultas)">
+                                @foreach($unassignedProdis as $prodi)
+                                    <option value="{{ $prodi->id }}"
+                                            data-fakultas-id=""
+                                            :disabled="Boolean(selectedFakultas)"
+                                            @selected(old('prodi_id') == $prodi->id)>
                                         {{ $prodi->nama_prodi }} ({{ $prodi->kode_prodi }})
                                     </option>
                                 @endforeach
                             </optgroup>
                         @endif
-                    @endforeach
-                    @php
-                        $unassignedProdis = $prodis->filter(fn ($p) => empty($p->fakultas_id));
-                    @endphp
-                    @if($unassignedProdis->isNotEmpty())
-                        <optgroup label="Program Studi Lainnya (Tanpa Fakultas)">
-                            @foreach($unassignedProdis as $prodi)
-                                <option value="{{ $prodi->id }}" @selected(old('prodi_id') == $prodi->id)>
-                                    {{ $prodi->nama_prodi }} ({{ $prodi->kode_prodi }})
-                                </option>
-                            @endforeach
-                        </optgroup>
-                    @endif
-                </select>
-                @error('prodi_id')
-                    <p class="mt-1 text-xs text-flame-orange">{{ $message }}</p>
-                @enderror
+                    </select>
+                    @error('prodi_id')
+                        <p class="mt-1 text-xs text-flame-orange">{{ $message }}</p>
+                    @enderror
+                </div>
             </div>
 
             <div class="pt-3 border-t border-warm-mist flex items-center justify-end gap-2">

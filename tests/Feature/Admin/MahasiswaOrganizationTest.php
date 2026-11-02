@@ -127,3 +127,28 @@ it('displays optgroup organized by faculty on create and edit forms', function (
         ->assertSee('Fakultas Teknologi Informasi (FTI)');
 });
 
+it('disables prodis of other faculties when a faculty is selected in search or filter', function (): void {
+    $admin = User::factory()->create(['role' => 'admin']);
+
+    $fakultasFTI = Fakultas::create(['kode' => 'FTI', 'nama' => 'Fakultas Teknologi Informasi']);
+    $prodiTI = Prodi::create(['kode_prodi' => 'TI', 'nama_prodi' => 'Teknik Informatika', 'fakultas_id' => $fakultasFTI->id]);
+
+    $fakultasFT = Fakultas::create(['kode' => 'FT', 'nama' => 'Fakultas Teknik']);
+    $prodiTS = Prodi::create(['kode_prodi' => 'TS', 'nama_prodi' => 'Teknik Sipil', 'fakultas_id' => $fakultasFT->id]);
+
+    // Request with fakultas_id for FTI
+    $response = $this->actingAs($admin)->get(route('admin.mahasiswa.index', [
+        'fakultas_id' => $fakultasFTI->id,
+        'search' => 'Informatika',
+    ]));
+
+    $response->assertOk();
+
+    // The FTI prodi should be enabled (not nonaktif)
+    $response->assertSee('Teknik Informatika (TI)');
+    $response->assertDontSee('Teknik Informatika (TI) [Nonaktif - Beda Fakultas]');
+
+    // The FT prodi should be disabled with nonaktif badge
+    $response->assertSee('Teknik Sipil (TS)');
+    $response->assertSee('[Nonaktif - Beda Fakultas]');
+});

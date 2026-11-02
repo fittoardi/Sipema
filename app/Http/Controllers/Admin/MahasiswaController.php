@@ -20,6 +20,14 @@ class MahasiswaController extends Controller
         $prodiId = $request->filled('prodi_id') ? (int) $request->input('prodi_id') : null;
         $search = $request->input('search');
 
+        // Check if prodi belongs to selected fakultas; if not, reset to prevent mismatched queries
+        if ($fakultasId && $prodiId) {
+            $belongs = Prodi::where('id', $prodiId)->where('fakultas_id', $fakultasId)->exists();
+            if (! $belongs) {
+                $prodiId = null;
+            }
+        }
+
         $mahasiswas = Mahasiswa::query()
             ->with(['prodi.fakultas', 'user', 'dosenWali'])
             ->filterByFakultas($fakultasId)
@@ -33,7 +41,6 @@ class MahasiswaController extends Controller
             ->get();
 
         $prodisList = Prodi::with('fakultas')
-            ->when($fakultasId, fn ($q) => $q->where('fakultas_id', $fakultasId))
             ->orderBy('nama')
             ->get();
 
