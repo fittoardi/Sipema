@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Mahasiswa\DashboardController;
 use App\Http\Controllers\Mahasiswa\JadwalController;
+use App\Http\Controllers\Mahasiswa\KelasController;
 use App\Http\Controllers\Mahasiswa\KrsController;
 use App\Http\Controllers\Mahasiswa\PresensiSayaController;
 use App\Http\Controllers\Mahasiswa\TugasController;
@@ -21,6 +22,24 @@ Route::middleware(['auth', 'role:mahasiswa'])
         // Jadwal Perkuliahan & Kalender
         Route::get('/jadwal', [JadwalController::class, 'index'])
             ->name('jadwal');
+
+        // Mata Kuliah & LMS Ruang Belajar
+        Route::get('/kelas', [KelasController::class, 'index'])->name('kelas.index');
+        Route::get('/kelas/{kela}', [KelasController::class, 'show'])->name('kelas.show');
+        Route::post('/materi/{materi}/toggle', [KelasController::class, 'toggleMateri'])->name('materi.toggle');
+        Route::get('/materi/{materi}/download', [KelasController::class, 'downloadMateri'])->name('materi.download');
+
+        // Pusat Tugas & Penugasan
+        Route::get('/tugas', [TugasController::class, 'index'])->name('tugas.index');
+        Route::get('/tugas/{tugas}', [TugasController::class, 'show'])->name('tugas.show');
+        Route::post('/tugas/{tugas}/submit', [TugasController::class, 'submit'])->name('tugas.submit');
+        Route::get('/tugas/{tugas}/download-lampiran', [TugasController::class, 'downloadLampiran'])->name('tugas.download-lampiran');
+        Route::get('/tugas/{tugas}/download-jawaban', [TugasController::class, 'downloadJawaban'])->name('tugas.download-jawaban');
+
+        // Presensi & Rekap Kehadiran
+        Route::get('/presensi', [PresensiSayaController::class, 'index'])->name('presensi.index');
+        Route::get('/pertemuan/{pertemuan}/presensi', [PresensiSayaController::class, 'show'])->name('presensi.show');
+        Route::post('/pertemuan/{pertemuan}/presensi', [PresensiSayaController::class, 'store'])->name('presensi.store');
 
         // KRS Online
         Route::get('/krs', [KrsController::class, 'index'])->name('krs.index');

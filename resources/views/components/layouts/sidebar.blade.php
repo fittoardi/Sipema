@@ -24,9 +24,14 @@
 			['label' => 'Unduh CSV Nilai', 'route' => 'dosen.dashboard.download-nilai', 'icon' => 'download'],
 		],
 		'mahasiswa' => [
+			['heading' => 'Akademik & Jadwal'],
 			['label' => 'Dashboard Nilai', 'route' => 'mahasiswa.dashboard', 'icon' => 'home'],
 			['label' => 'Jadwal & Kalender', 'route' => 'mahasiswa.jadwal', 'icon' => 'calendar'],
 			['label' => 'KRS Online', 'route' => 'mahasiswa.krs.index', 'icon' => 'clipboard'],
+			['heading' => 'E-Learning & Perkuliahan'],
+			['label' => 'Mata Kuliah & LMS', 'route' => 'mahasiswa.kelas.index', 'icon' => 'book'],
+			['label' => 'Tugas & Penugasan', 'route' => 'mahasiswa.tugas.index', 'icon' => 'document-check'],
+			['label' => 'Rekap Presensi', 'route' => 'mahasiswa.presensi.index', 'icon' => 'fingerprint'],
 			['label' => 'Unduh Nilai (CSV)', 'route' => 'mahasiswa.dashboard.download-nilai', 'icon' => 'download'],
 		],
 		default => [
@@ -63,16 +68,22 @@
 		<!-- Menu list -->
 		<nav class="p-2 space-y-0.5 overflow-y-auto text-xs">
 			@foreach($menus as $item)
-				@php
-					$isActive = isset($item['route']) && request()->routeIs($item['route']);
-					$href = isset($item['route']) ? (Route::has($item['route']) ? route($item['route']) : ($item['url'] ?? '#')) : ($item['url'] ?? '#');
-				@endphp
+				@if(isset($item['heading']))
+					<div class="px-2.5 pt-3 pb-1 text-[10px] font-mono font-bold text-sage-gray uppercase tracking-wider">
+						{{ $item['heading'] }}
+					</div>
+				@else
+					@php
+						$isActive = isset($item['route']) && request()->routeIs($item['route']);
+						$href = isset($item['route']) ? (Route::has($item['route']) ? route($item['route']) : ($item['url'] ?? '#')) : ($item['url'] ?? '#');
+					@endphp
 
-				<a href="{{ $href }}"
-				   class="flex items-center gap-2.5 px-2.5 py-2 rounded-[4px] font-medium transition {{ $isActive ? 'bg-paper-white text-signal-blue border border-warm-mist font-semibold shadow-2xs' : 'text-olive-char hover:bg-pale-stone hover:text-deep-moss' }}">
-					<span class="w-1.5 h-1.5 rounded-full {{ $isActive ? 'bg-signal-blue' : 'bg-warm-mist' }}"></span>
-					<span>{{ $item['label'] }}</span>
-				</a>
+					<a href="{{ $href }}"
+					   class="flex items-center gap-2.5 px-2.5 py-2 rounded-[4px] font-medium transition {{ $isActive ? 'bg-paper-white text-signal-blue border border-warm-mist font-semibold shadow-2xs' : 'text-olive-char hover:bg-pale-stone hover:text-deep-moss' }}">
+						<span class="w-1.5 h-1.5 rounded-full {{ $isActive ? 'bg-signal-blue' : 'bg-warm-mist' }}"></span>
+						<span>{{ $item['label'] }}</span>
+					</a>
+				@endif
 			@endforeach
 		</nav>
 	</div>

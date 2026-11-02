@@ -10,6 +10,7 @@ use App\Models\KelasMahasiswa;
 use App\Models\Mahasiswa;
 use App\Models\MataKuliah;
 use App\Models\Nilai;
+use App\Models\Tugas;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -64,6 +65,17 @@ class DashboardController extends Controller
 
         $jumlahJadwal = $kelasIds->count();
 
+        $kelasListActive = Kelas::with(['mataKuliah.programStudi', 'dosen.user', 'ruangan'])
+            ->whereIn('id', $kelasIds)
+            ->get();
+
+        $tugasPending = Tugas::whereHas('pertemuan', fn ($q) => $q->whereIn('kelas_id', $kelasIds))
+            ->with(['pertemuan.kelas.mataKuliah'])
+            ->whereDoesntHave('pengumpulans', fn ($q) => $q->where('mahasiswa_id', $mahasiswa->id))
+            ->orderBy('batas_waktu', 'asc')
+            ->take(3)
+            ->get();
+
         return view('dashboard.mahasiswa.index', [
             'mahasiswa' => $mahasiswa,
             'jumlahMataKuliah' => $jumlahMataKuliah,
@@ -73,6 +85,8 @@ class DashboardController extends Controller
             'nilais' => $nilais,
             'jadwalHariIni' => $jadwalHariIni,
             'todayHari' => $todayHari,
+            'kelasListActive' => $kelasListActive,
+            'tugasPending' => $tugasPending,
         ]);
     }
 

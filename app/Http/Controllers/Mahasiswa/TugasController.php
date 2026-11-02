@@ -16,6 +16,106 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class TugasController extends Controller
 {
+    public function index(Request $request): View
+    {
+        $user = $request->user();
+        $mahasiswa = Mahasiswa::with(['prodi.fakultas', 'user'])
+            ->where('user_id', $user->id)
+            ->firstOrFail();
+
+        $kelasIds = KelasMahasiswa::where('mahasiswa_id', $mahasiswa->id)
+            ->pluck('kelas_id')
+            ->merge(
+                $mahasiswa->krsAktif?->krsDetail()->pluck('kelas_id') ?? collect()
+            )
+            ->unique()
+            ->values();
+
+        $filterStatus = $request->input('status', 'semua');
+
+        $tugasList = Tugas::query()
+            ->whereHas('pertemuan', fn ($q) => $q->whereIn('kelas_id', $kelasIds))
+            ->with([
+                'pertemuan.kelas.mataKuliah',
+                'pertemuan.kelas.dosen.user',
+                'pengumpulans' => fn ($q) => $q->where('mahasiswa_id', $mahasiswa->id),
+            ])
+            ->orderBy('batas_waktu', 'asc')
+            ->get();
+
+        $now = Carbon::now();
+
+        $tugasList = $tugasList->map(function (Tugas $t) use ($now) {
+            $submission = $t->pengumpulans->first();
+            $isSubmitted = $submission !== null;
+            $isGraded = $submission && $submission->nilai !== null;
+            $isOverdue = $now->greaterThan($t->batas_waktu);
+
+            if ($isGraded) {
+                $statusKey = 'dinilai';
+                $statusLabel = 'Dinilai: '.number_format($submission->nilai, 1);
+                $statusBadge = 'tag-pill-green';
+            } elseif ($isSubmitted) {
+                $statusKey = 'dikumpulkan';
+                $statusLabel = 'Menunggu Penilaian';
+                $statusBadge = 'tag-pill-blue';
+            } elseif ($isOverdue) {
+                $statusKey = 'terlambat';
+                $statusLabel = $t->allow_late ? 'Terlambat (Bisa Kumpul)' : 'Tenggat Berakhir';
+                $statusBadge = 'tag-pill-orange';
+            } else {
+                $statusKey = 'pending';
+                $statusLabel = 'Perlu Dikerjakan';
+                $statusBadge = 'tag-pill-amber';
+            }
+
+            $diffHours = $now->diffInHours($t->batas_waktu, false);
+            if ($diffHours > 24) {
+                $sisaHari = ceil($diffHours / 24);
+                $countdownText = "Sisa {$sisaHari} hari";
+            } elseif ($diffHours > 0) {
+                $countdownText = "Sisa {$diffHours} jam";
+            } else {
+                $countdownText = 'Tenggat lewat';
+            }
+
+            $t->submission = $submission;
+            $t->is_submitted = $isSubmitted;
+            $t->is_graded = $isGraded;
+            $t->is_overdue = $isOverdue;
+            $t->status_key = $statusKey;
+            $t->status_label = $statusLabel;
+            $t->status_badge = $statusBadge;
+            $t->countdown_text = $countdownText;
+
+            return $t;
+        });
+
+        // Compute counts
+        $totalAll = $tugasList->count();
+        $totalPending = $tugasList->whereIn('status_key', ['pending', 'terlambat'])->where('is_submitted', false)->count();
+        $totalSubmitted = $tugasList->where('status_key', 'dikumpulkan')->count();
+        $totalGraded = $tugasList->where('status_key', 'dinilai')->count();
+
+        // Apply filter
+        $filteredTugas = match ($filterStatus) {
+            'pending' => $tugasList->whereIn('status_key', ['pending', 'terlambat'])->where('is_submitted', false)->values(),
+            'dikumpulkan' => $tugasList->where('status_key', 'dikumpulkan')->values(),
+            'dinilai' => $tugasList->where('status_key', 'dinilai')->values(),
+            default => $tugasList->values(),
+        };
+
+        return view('mahasiswa.tugas.index', [
+            'mahasiswa' => $mahasiswa,
+            'tugasList' => $filteredTugas,
+            'filterStatus' => $filterStatus,
+            'totalAll' => $totalAll,
+            'totalPending' => $totalPending,
+            'totalSubmitted' => $totalSubmitted,
+            'totalGraded' => $totalGraded,
+        ]);
+    }
+
     protected function authorizeMahasiswaEnrollment(Request $request, Tugas $tugas): array
     {
         $mahasiswa = Mahasiswa::where('user_id', $request->user()->id)->firstOrFail();

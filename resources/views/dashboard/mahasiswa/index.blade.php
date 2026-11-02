@@ -93,67 +93,163 @@
             </div>
         </div>
 
-        {{-- Jadwal Kuliah Hari Ini & Kalender Ringkas --}}
-        <div class="bg-paper-white border border-warm-mist rounded-[4px] p-4 shadow-2xs">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-3 border-b border-warm-mist">
-                <div class="flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-signal-blue"></span>
-                    <h2 class="text-xs font-bold text-deep-moss uppercase tracking-wider">Perkuliahan Hari Ini ({{ $todayHari }}, {{ date('d M Y') }})</h2>
-                    <span class="tag-pill tag-pill-blue text-[10px] font-mono">{{ $jadwalHariIni->count() }} Sesi Terjadwal</span>
-                </div>
-                <a href="{{ route('mahasiswa.jadwal') }}" class="text-xs text-signal-blue hover:underline font-mono font-bold inline-flex items-center gap-1">
-                    Buka Kalender & Jadwal Lengkap &rarr;
-                </a>
-            </div>
+        {{-- Today's Schedule & Urgent Tasks Grid --}}
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+            {{-- Jadwal Kuliah Hari Ini (7 Cols) --}}
+            <div class="lg:col-span-7 bg-paper-white border border-warm-mist rounded-[4px] p-4 shadow-2xs flex flex-col justify-between">
+                <div>
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-3 border-b border-warm-mist">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-signal-blue"></span>
+                            <h2 class="text-xs font-bold text-deep-moss uppercase tracking-wider">Perkuliahan Hari Ini ({{ $todayHari }}, {{ date('d M Y') }})</h2>
+                            <span class="tag-pill tag-pill-blue text-[10px] font-mono">{{ $jadwalHariIni->count() }} Sesi</span>
+                        </div>
+                        <a href="{{ route('mahasiswa.jadwal') }}" class="text-xs text-signal-blue hover:underline font-mono font-bold inline-flex items-center gap-1">
+                            Buka Kalender &rarr;
+                        </a>
+                    </div>
 
-            <div class="mt-3">
-                @if($jadwalHariIni->isNotEmpty())
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                        @foreach($jadwalHariIni as $jk)
+                    <div class="mt-3 space-y-2.5">
+                        @forelse($jadwalHariIni as $jk)
                             @php
                                 $pertemuanBuka = $jk->pertemuan->firstWhere('is_presensi_open', true);
                             @endphp
-                            <div class="p-3 rounded-[4px] border border-warm-mist bg-cream-paper hover:bg-white transition flex flex-col justify-between">
+                            <div class="p-3 rounded-[4px] border border-warm-mist bg-cream-paper hover:bg-white transition flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5">
                                 <div>
-                                    <div class="flex items-center justify-between text-[11px] font-mono mb-1">
+                                    <div class="flex items-center gap-2 text-[11px] font-mono mb-0.5">
                                         <span class="font-bold text-deep-moss">{{ substr($jk->jam_mulai, 0, 5) }} - {{ substr($jk->jam_selesai, 0, 5) }} WIB</span>
                                         <span class="tag-pill text-[9px] {{ $jk->tipe_kelas?->value === 'online' ? 'tag-pill-blue' : 'tag-pill-green' }}">
                                             {{ strtoupper($jk->tipe_kelas?->value ?? 'OFFLINE') }}
                                         </span>
+                                        <span class="text-sage-gray">&bull; Kelas {{ $jk->nama_kelas }}</span>
                                     </div>
                                     <h3 class="text-xs font-bold text-deep-moss">{{ $jk->mataKuliah?->nama ?? 'Mata Kuliah' }}</h3>
                                     <p class="text-[11px] text-olive-char font-mono mt-0.5">
-                                        Kelas {{ $jk->nama_kelas }} &bull; {{ $jk->ruangan?->nama ?? 'Online / Zoom' }}
-                                    </p>
-                                    <p class="text-[10px] text-sage-gray mt-1 truncate">
-                                        Dosen: {{ $jk->dosen?->nama ?? '-' }}
+                                        {{ $jk->ruangan?->nama ?? 'Online / Zoom' }} &bull; Dosen: {{ $jk->dosen?->nama ?? '-' }}
                                     </p>
                                 </div>
 
-                                <div class="mt-2.5 pt-2 border-t border-warm-mist flex items-center justify-between">
-                                    <span class="text-[10px] font-mono text-sage-gray">{{ $jk->mataKuliah?->sks ?? 3 }} SKS</span>
+                                <div class="flex items-center gap-1.5 flex-shrink-0">
                                     @if($pertemuanBuka)
-                                        <a href="{{ route('mahasiswa.presensi.show', $pertemuanBuka->id) }}" class="btn-amber text-[10px] py-1 px-2 font-bold inline-flex items-center gap-1">
+                                        <a href="{{ route('mahasiswa.presensi.show', $pertemuanBuka->id) }}" class="btn-amber text-xs py-1.5 px-3 font-bold inline-flex items-center gap-1 animate-pulse">
                                             <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
                                             Absen Sekarang
                                         </a>
                                     @else
-                                        <span class="text-[10px] font-mono text-sage-gray">Terjadwal</span>
+                                        <a href="{{ route('mahasiswa.kelas.show', $jk->id) }}" class="btn-mist text-xs py-1.5 px-2.5 text-signal-blue font-mono">
+                                            Ruang LMS &rarr;
+                                        </a>
                                     @endif
                                 </div>
                             </div>
-                        @endforeach
+                        @empty
+                            <div class="py-7 text-center text-sage-gray bg-cream-paper/50 rounded-[4px] border border-dashed border-warm-mist">
+                                <p class="text-xs font-bold text-olive-char">Tidak ada perkuliahan hari ini ({{ $todayHari }}).</p>
+                                <p class="text-[11px] text-sage-gray mt-0.5">Semua sesi teratur terjadwal pada hari kuliah lainnya.</p>
+                                <a href="{{ route('mahasiswa.jadwal') }}" class="text-[11px] font-mono font-bold text-signal-blue hover:underline mt-1.5 inline-block">
+                                    Cek Kalender Akademik &rarr;
+                                </a>
+                            </div>
+                        @endforelse
                     </div>
-                @else
-                    <div class="py-6 text-center text-sage-gray bg-cream-paper/50 rounded-[4px] border border-dashed border-warm-mist">
-                        <svg class="w-6 h-6 mx-auto mb-1 text-sage-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                        <p class="text-xs font-bold text-olive-char">Tidak ada jadwal kuliah hari ini ({{ $todayHari }}).</p>
-                        <p class="text-[11px] text-sage-gray mt-0.5">Nikmati waktu belajar mandiri atau persiapkan materi untuk sesi berikutnya.</p>
-                        <a href="{{ route('mahasiswa.jadwal') }}" class="text-[11px] font-mono font-bold text-signal-blue hover:underline mt-2 inline-block">
-                            Lihat Jadwal Hari Lainnya &rarr;
+                </div>
+
+                <div class="pt-3 border-t border-warm-mist mt-3 flex items-center justify-between text-[11px] font-mono text-olive-char">
+                    <span>Total {{ $jumlahJadwal }} Rombel Kelas Aktif</span>
+                    <a href="{{ route('mahasiswa.jadwal') }}" class="text-signal-blue hover:underline font-bold">
+                        Jadwal Mingguan Lengkap &rarr;
+                    </a>
+                </div>
+            </div>
+
+            {{-- Tugas Mendatang yang Perlu Diselesaikan (5 Cols) --}}
+            <div class="lg:col-span-5 bg-paper-white border border-warm-mist rounded-[4px] p-4 shadow-2xs flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between pb-3 border-b border-warm-mist">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-flame-orange"></span>
+                            <h2 class="text-xs font-bold text-deep-moss uppercase tracking-wider">Tugas Mendatang</h2>
+                        </div>
+                        <a href="{{ route('mahasiswa.tugas.index') }}" class="text-xs text-signal-blue hover:underline font-mono font-bold">
+                            Semua Tugas &rarr;
                         </a>
                     </div>
-                @endif
+
+                    <div class="mt-3 space-y-2.5">
+                        @forelse($tugasPending as $tp)
+                            <div class="p-3 rounded-[4px] border border-warm-mist bg-cream-paper hover:bg-white transition flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between text-[10px] font-mono mb-1">
+                                        <span class="font-bold text-signal-blue">{{ $tp->pertemuan?->kelas?->mataKuliah?->kode ?? 'MK' }}</span>
+                                        <span class="tag-pill tag-pill-amber font-mono font-bold text-[9px]">Perlu Dikerjakan</span>
+                                    </div>
+                                    <h4 class="text-xs font-bold text-deep-moss">{{ $tp->judul }}</h4>
+                                    <p class="text-[11px] text-olive-char font-mono mt-0.5">
+                                        Tenggat: <span class="font-bold text-deep-moss">{{ $tp->batas_waktu->format('d M Y, H:i') }} WIB</span>
+                                    </p>
+                                </div>
+                                <div class="mt-2.5 pt-2 border-t border-warm-mist/60 flex items-center justify-end">
+                                    <a href="{{ route('mahasiswa.tugas.show', $tp->id) }}" class="btn-amber text-[10px] py-1 px-2.5 font-bold inline-flex items-center gap-1">
+                                        Kerjakan & Unggah &rarr;
+                                    </a>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="py-7 text-center text-sage-gray bg-cream-paper/50 rounded-[4px] border border-dashed border-warm-mist">
+                                <svg class="w-7 h-7 mx-auto mb-1 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <p class="text-xs font-bold text-deep-moss">Semua Tugas Sudah Beres!</p>
+                                <p class="text-[11px] text-sage-gray mt-0.5">Tidak ada tugas pending yang mendesak.</p>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+
+                <div class="pt-3 border-t border-warm-mist mt-3 flex items-center justify-between text-[11px] font-mono text-olive-char">
+                    <span>Pusat Penugasan Terintegrasi</span>
+                    <a href="{{ route('mahasiswa.tugas.index') }}" class="text-signal-blue hover:underline font-bold">
+                        Buka Pusat Tugas &rarr;
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {{-- Mata Kuliah & LMS Saya Grid Section --}}
+        <div class="bg-paper-white border border-warm-mist rounded-[4px] p-4 shadow-2xs">
+            <div class="flex items-center justify-between pb-3 border-b border-warm-mist">
+                <div>
+                    <h2 class="text-xs font-bold text-deep-moss uppercase tracking-wider">Mata Kuliah Semester Ini &amp; Ruang LMS</h2>
+                    <p class="text-[11px] text-olive-char">Daftar kelas aktif yang Anda ambil pada semester berjalan.</p>
+                </div>
+                <a href="{{ route('mahasiswa.kelas.index') }}" class="btn-mist text-xs">
+                    Lihat Semua Ruang Belajar &rarr;
+                </a>
+            </div>
+
+            <div class="grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-3">
+                @foreach($kelasListActive as $ka)
+                    <div class="p-3.5 rounded-[4px] border border-warm-mist bg-cream-paper hover:bg-white hover:border-signal-blue transition flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between text-[11px] font-mono mb-1">
+                                <span class="font-bold text-signal-blue">{{ $ka->mataKuliah?->kode ?? '-' }}</span>
+                                <span class="tag-pill tag-pill-stone text-[9px] font-bold">Kelas {{ $ka->nama_kelas }}</span>
+                            </div>
+                            <h3 class="text-xs font-bold text-deep-moss leading-snug">{{ $ka->mataKuliah?->nama ?? 'Mata Kuliah' }}</h3>
+                            <p class="text-[11px] text-olive-char font-mono mt-1">
+                                {{ $ka->hari?->value ?? $ka->hari }}, {{ substr($ka->jam_mulai, 0, 5) }} - {{ substr($ka->jam_selesai, 0, 5) }} WIB
+                            </p>
+                            <p class="text-[10px] text-sage-gray mt-0.5 font-mono truncate">
+                                Dosen: {{ $ka->dosen?->nama ?? '-' }}
+                            </p>
+                        </div>
+
+                        <div class="mt-3 pt-2.5 border-t border-warm-mist flex items-center justify-between">
+                            <span class="text-[10px] font-mono text-sage-gray font-bold">{{ $ka->sks }} SKS</span>
+                            <a href="{{ route('mahasiswa.kelas.show', $ka->id) }}" class="btn-amber text-[10px] py-1 px-2.5 font-bold inline-flex items-center gap-1">
+                                Masuk LMS &rarr;
+                            </a>
+                        </div>
+                    </div>
+                @endforeach
             </div>
         </div>
 
