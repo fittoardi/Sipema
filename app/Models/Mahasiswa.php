@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -14,6 +15,26 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property int $program_studi_id
+ * @property int|null $dosen_wali_id
+ * @property string $nim
+ * @property string $nama
+ * @property int $angkatan
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read User|null $user
+ * @property-read ProgramStudi|null $programStudi
+ * @property-read ProgramStudi|null $prodi
+ * @property-read Fakultas|null $fakultas
+ * @property-read string $fakultas_badge_color
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static> query()
+ *
+ * @mixin Builder
+ */
 #[UseEloquentBuilder(Builder::class)]
 class Mahasiswa extends Model
 {

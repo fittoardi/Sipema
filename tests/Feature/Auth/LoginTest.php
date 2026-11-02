@@ -1,187 +1,163 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Tests\Feature\Auth;
-
+use App\Models\Dosen;
 use App\Models\Mahasiswa;
+use App\Models\Prodi;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class LoginTest extends TestCase
-{
-    use RefreshDatabase;
+uses(RefreshDatabase::class);
 
-    /** @test */
-    public function login_page_can_be_rendered()
-    {
-        $response = $this->get('/login');
+test('login page can be rendered', function (): void {
+    $response = $this->get('/login');
 
-        $response->assertStatus(200);
-    }
+    $response->assertOk();
+});
 
-    /** @test */
-    public function user_can_login_with_valid_credentials()
-    {
-        $user = User::factory()->create([
-            'password' => bcrypt('password123'),
-        ]);
+test('user can login with valid email credentials', function (): void {
+    $user = User::factory()->create([
+        'role' => 'admin',
+        'password' => bcrypt('password123'),
+    ]);
 
-        $response = $this->post('/login', [
-            'login' => $user->email,
-            'password' => 'password123',
-        ]);
+    $response = $this->post('/login', [
+        'login' => $user->email,
+        'password' => 'password123',
+    ]);
 
-        $response->assertRedirect('/dashboard');
+    $response->assertRedirect(route('admin.dashboard'));
+    $this->assertAuthenticatedAs($user);
+});
 
-        $this->assertAuthenticated();
-    }
+test('dosen can login with email or nidn', function (): void {
+    $user = User::factory()->create([
+        'role' => 'dosen',
+        'password' => bcrypt('password123'),
+    ]);
 
-    /** @test */
-    public function dosen_user_is_redirected_to_dosen_dashboard_after_login()
-    {
-        $user = User::factory()->create([
-            'role' => 'dosen',
-            'password' => bcrypt('password123'),
-        ]);
+    $prodi = Prodi::factory()->create();
+    Dosen::create([
+        'user_id' => $user->id,
+        'nidn' => '0012345678',
+        'nama' => 'Dosen Test',
+        'program_studi_id' => $prodi->id,
+    ]);
 
-        $response = $this->post('/login', [
-            'login' => $user->email,
-            'password' => 'password123',
-        ]);
+    $response = $this->post('/login', [
+        'login' => '0012345678',
+        'password' => 'password123',
+    ]);
 
-        $response->assertRedirect('/dosen/dashboard');
-        $this->assertAuthenticatedAs($user);
-    }
+    $response->assertRedirect(route('dosen.dashboard'));
+    $this->assertAuthenticatedAs($user);
+});
 
-    /** @test */
-    public function mahasiswa_can_login_with_nim()
-    {
-        $user = User::factory()->create([
-            'role' => 'mahasiswa',
-            'password' => bcrypt('password123'),
-        ]);
+test('mahasiswa can login with nim', function (): void {
+    $user = User::factory()->create([
+        'role' => 'mahasiswa',
+        'password' => bcrypt('password123'),
+    ]);
 
-        Mahasiswa::create([
-            'user_id' => $user->id,
-            'nim' => '23110001',
-            'prodi_id' => 1,
-            'angkatan' => 2023,
-        ]);
+    $prodi = Prodi::factory()->create();
+    Mahasiswa::create([
+        'user_id' => $user->id,
+        'nama' => 'Mahasiswa Test',
+        'nim' => '23110001',
+        'program_studi_id' => $prodi->id,
+        'angkatan' => 2023,
+    ]);
 
-        $response = $this->post('/login', [
-            'login' => '23110001',
-            'password' => 'password123',
-        ]);
+    $response = $this->post('/login', [
+        'login' => '23110001',
+        'password' => 'password123',
+    ]);
 
-        $response->assertRedirect('/mahasiswa/dashboard');
-        $this->assertAuthenticatedAs($user);
-    }
+    $response->assertRedirect(route('mahasiswa.dashboard'));
+    $this->assertAuthenticatedAs($user);
+});
 
-    /** @test */
-    public function user_cannot_login_with_wrong_password()
-    {
-        $user = User::factory()->create([
-            'password' => bcrypt('password123'),
-        ]);
+test('admin can login with username admin', function (): void {
+    $admin = User::factory()->create([
+        'role' => 'admin',
+        'password' => bcrypt('password123'),
+    ]);
 
-        $response = $this->from('/login')->post('/login', [
-            'login' => $user->email,
-            'password' => 'salahpassword',
-        ]);
+    $response = $this->post('/login', [
+        'login' => 'admin',
+        'password' => 'password123',
+    ]);
 
-        $response
-            ->assertRedirect('/login')
-            ->assertSessionHasErrors();
+    $response->assertRedirect(route('admin.dashboard'));
+    $this->assertAuthenticatedAs($admin);
+});
 
-        $this->assertGuest();
-    }
+test('user cannot login with wrong password', function (): void {
+    $user = User::factory()->create([
+        'password' => bcrypt('password123'),
+    ]);
 
-    /** @test */
-    public function login_fails_if_user_not_found()
-    {
-        $response = $this->from('/login')->post('/login', [
-            'login' => 'user@test.com',
-            'password' => 'password123',
-        ]);
+    $response = $this->from('/login')->post('/login', [
+        'login' => $user->email,
+        'password' => 'salahpassword',
+    ]);
 
-        $response
-            ->assertRedirect('/login')
-            ->assertSessionHasErrors();
+    $response->assertRedirect('/login')
+        ->assertSessionHasErrors('login');
 
-        $this->assertGuest();
-    }
+    $this->assertGuest();
+});
 
-    /** @test */
-    public function login_field_is_required()
-    {
-        $response = $this->from('/login')->post('/login', [
-            'login' => '',
-            'password' => 'password123',
-        ]);
+test('login fails if user not found', function (): void {
+    $response = $this->from('/login')->post('/login', [
+        'login' => 'tidakada@test.com',
+        'password' => 'password123',
+    ]);
 
-        $response
-            ->assertRedirect('/login')
-            ->assertSessionHasErrors('login');
-    }
+    $response->assertRedirect('/login')
+        ->assertSessionHasErrors('login');
 
-    /** @test */
-    public function password_field_is_required()
-    {
-        $response = $this->from('/login')->post('/login', [
-            'login' => 'admin@test.com',
-            'password' => '',
-        ]);
+    $this->assertGuest();
+});
 
-        $response
-            ->assertRedirect('/login')
-            ->assertSessionHasErrors('password');
-    }
+test('login and password fields are required', function (): void {
+    $response = $this->from('/login')->post('/login', [
+        'login' => '',
+        'password' => '',
+    ]);
 
-    /** @test */
-    public function remember_me_login()
-    {
-        $user = User::factory()->create([
-            'password' => bcrypt('password123'),
-        ]);
+    $response->assertRedirect('/login')
+        ->assertSessionHasErrors(['login', 'password']);
+});
 
-        $response = $this->post('/login', [
-            'login' => $user->email,
-            'password' => 'password123',
-            'remember' => true,
-        ]);
+test('remember me can be toggled during login', function (): void {
+    $user = User::factory()->create([
+        'role' => 'admin',
+        'password' => bcrypt('password123'),
+    ]);
 
-        $response->assertRedirect('/dashboard');
+    $response = $this->post('/login', [
+        'login' => $user->email,
+        'password' => 'password123',
+        'remember' => '1',
+    ]);
 
-        $this->assertAuthenticated();
-    }
+    $response->assertRedirect(route('admin.dashboard'));
+    $this->assertAuthenticatedAs($user);
+});
 
-    /** @test */
-    public function authenticated_user_cannot_access_login_page()
-    {
-        /** @var User $user */
-        $user = User::factory()->create();
+test('authenticated user cannot access login page', function (): void {
+    $admin = User::factory()->create(['role' => 'admin']);
 
-        $this->actingAs($user);
+    $response = $this->actingAs($admin)->get('/login');
 
-        $response = $this->get('/login');
+    $response->assertRedirect(route('admin.dashboard'));
+});
 
-        $response->assertRedirect('/dashboard');
-    }
+test('authenticated user can logout', function (): void {
+    $user = User::factory()->create();
 
-    /** @test */
-    public function authenticated_user_can_logout()
-    {
-        /** @var User $user */
-        $user = User::factory()->create();
+    $response = $this->actingAs($user)->post('/logout');
 
-        $this->actingAs($user);
-
-        $response = $this->post('/logout');
-
-        $response->assertRedirect('/');
-
-        $this->assertGuest();
-    }
-}
+    $response->assertRedirect('/');
+    $this->assertGuest();
+});

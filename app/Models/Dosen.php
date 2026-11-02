@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -11,6 +12,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property int $program_studi_id
+ * @property string $nidn
+ * @property string|null $nip
+ * @property string $nama
+ * @property string|null $email
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read User|null $user
+ * @property-read ProgramStudi|null $programStudi
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder<static> query()
+ *
+ * @mixin Builder
+ */
 #[UseEloquentBuilder(Builder::class)]
 class Dosen extends Model
 {
