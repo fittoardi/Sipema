@@ -30,11 +30,11 @@ class AuthenticatedSessionController extends Controller
 
         $user = $request->user();
 
-        if ($user?->role === 'dosen') {
+        if ($user?->isDosen()) {
             return redirect()->intended(route('dosen.dashboard', absolute: false));
         }
 
-        if ($user?->role === 'mahasiswa') {
+        if ($user?->isMahasiswa()) {
             return redirect()->intended(route('mahasiswa.dashboard', absolute: false));
         }
 

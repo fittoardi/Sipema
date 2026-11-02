@@ -13,6 +13,24 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->redirectTo(
+            guests: '/login',
+            users: function (Request $request): string {
+                $user = $request->user();
+                if ($user?->isAdmin()) {
+                    return route('admin.dashboard');
+                }
+                if ($user?->isDosen()) {
+                    return route('dosen.dashboard');
+                }
+                if ($user?->isMahasiswa()) {
+                    return route('mahasiswa.dashboard');
+                }
+
+                return route('login');
+            }
+        );
+
         $middleware->alias([
             'role' => RoleMiddleware::class,
         ]);

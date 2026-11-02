@@ -95,6 +95,12 @@ class LoginRequest extends FormRequest
 
         $user = User::where('email', $login)->first();
 
+        if (! $user && strtolower($login) === 'admin') {
+            $user = User::where('email', 'admin@sipenma.test')
+                ->orWhere('role', 'admin')
+                ->first();
+        }
+
         if (! $user) {
             $mahasiswa = Mahasiswa::where('nim', $login)->first();
 
